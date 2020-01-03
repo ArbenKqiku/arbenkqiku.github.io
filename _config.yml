@@ -109,7 +109,7 @@ analytics:
 author:
   name             : "Arben Kqiku"
   avatar           : # path of avatar image, e.g. "/assets/images/bio-photo.jpg"
-  bio              : "Welcome! This is my data science and programming portfolio. Feel free to look around. If you see what you like, star my repository and add me on LinkedIn!"
+  bio              : "Welcome! This is my data science and programming portfolio. Feel free to look around. If you like what you see, star my repository and add me on LinkedIn!"
   location         : "Geneva, Switzeland"
   email            :
   links:
