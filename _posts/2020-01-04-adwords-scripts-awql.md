@@ -123,7 +123,7 @@ Logger.log(finalString);
 
 Now that we have built our query, let’s jump to the next step.
 
-# Accessing the data defined by the query:
+# Accessing the data defined by the query
 
 Here is the code:
 
