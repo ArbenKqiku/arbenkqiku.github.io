@@ -1,6 +1,5 @@
 ---
-layout: posts
-permalink: /adWords-scripts/
+permalink: /adwords-scripts/
 title: "AdWords Scripts"
 author_profile: true
 header:
