@@ -1,8 +1,10 @@
 ---
-title: "/About/"
-permalink: "/about/"
+title: "About"
+permalink: /about/
 header:
-  image: "arben-kqiku-pic.png"
+  image: "/images/zakim.jpg"
 ---
 
-Hello I hope you are doing well I am just trying to do some data science. Peace.
+I'm a senior data scientist who excels at data wrangling, machine learning, exploratory analysis, and data visualizations.
+
+Etc, etc, etc
