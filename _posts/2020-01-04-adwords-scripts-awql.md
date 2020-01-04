@@ -16,7 +16,7 @@ In this post, you will learn:
 * How to build a query by using the AdWords Query Language (AWQL)
 * How to access report data by using a query
 
-## Google AdWords API reports
+# Google AdWords API reports
 
 Google AdWords API reports are simply reports that focus on one particular kind of data. For instance, the “keywords performance report” allows to query data related to keywords. In general, you can combine 3 types of fields to make query:
 
@@ -36,7 +36,7 @@ The “keywords performance report” is just an example. In fact, on the left s
 
 If you want to query a particular report, it is important to look at the fields are available for that report. For instance, the attribute field “criteria”, which refers to keywords, is not available in the “ad group performance” report.
 
-## Access account data from MCC
+# Access account data from MCC
 
 The first thing that you have to do, is to create an empty AdWords script. To do so, go under tools & settings > scripts and click on the blue plus on the top left corner.
 
