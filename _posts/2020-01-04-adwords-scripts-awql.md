@@ -16,11 +16,11 @@ In this post, you will learn:
 * How to build a query by using the AdWords Query Language (AWQL)
 * How to access report data by using a query
 
-# Google AdWords API reports
+## Google AdWords API reports
 
-Google AdWords API reports are simply reports that focus on one particular kind of data. For instance, the “keywords performance report” allows to query data related to keywords. In general, you can combine 3 types of fields to make a report:
+Google AdWords API reports are simply reports that focus on one particular kind of data. For instance, the “keywords performance report” allows to query data related to keywords. In general, you can combine 3 types of fields to make query:
 
-* *Attribute fields*: this is data related to settings or other fixed data, such an Ad group’s status, bidding strategy, etc.
+* *Attribute fields*: this is data related to settings or other fixed data, such an ad group’s status, bidding strategy, etc.
 * *Segment fields*: here you can find dimensions that will allow you to further segment your data. For example, you can segment data by date, conversion type or device.
 * *Metric fields*: these are quantitative indicators such as conversions, average cpc, conversion rate, etc.
 
@@ -34,9 +34,9 @@ The “keywords performance report” is just an example. In fact, on the left s
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-1-google-adwords-scripts/image-1.jpg" alt="linearly separable data">
 
-If you want to query a particular report, it is important to first look at what fields are available for that report. For instance, the attribute field “criteria”, which refers to keywords, is not available in the “ad group performance” report.
+If you want to query a particular report, it is important to look at the fields are available for that report. For instance, the attribute field “criteria”, which refers to keywords, is not available in the “ad group performance” report.
 
-# Access account data from MCC
+## Access account data from MCC
 
 The first thing that you have to do, is to create an empty AdWords script. To do so, go under tools & settings > scripts and click on the blue plus on the top left corner.
 
@@ -61,7 +61,7 @@ To start with, it is important to define a variable which contains the account t
 var accountId = ["xyz-xyz-xyzy"];
 ```
 
-In this following part, we are telling Google Ads to look for the account with the id of the variable previously defined, namely accountId:
+In the following part, we are telling Google Ads to look for the account with the id of the variable previously defined, namely accountId:
 ```javascript
 MccApp.accounts().withIds(accountId);
 ```
@@ -90,7 +90,7 @@ Anyway, let’s dissect the query that we are going to build to retrieve data:
               " DURING 20190505,20191031";
 ```
 
-This query is composed of four elements (although there are more that you can find on the AWQL official page that I listed above), also called clauses:
+This query is composed by four elements (although there are more that you can find on the AWQL official page that I listed above), also called clauses:
 
 * *SELECT*: here you define the fields that you would like to have in your report. It is important to use the same field names found in each report’s page. For instance, on the “keywords performance report”, keywords are defined as “criteria”. Don’t ask me why, I don’t know, I just follow the rules. Also, it is important to separate each field by a comma.
 *	*FROM*: here you define the report from which you are getting the data. In our case, we are using the “keywords performance report”. It is important to separate each word with an underscore.
@@ -136,19 +136,19 @@ while(rows.hasNext()){
   }
 ```
 
-This following piece of code, allows us to select a particular report. The argument of this piece of code is an AWQL query. Luckily for us, we can use the query that we have previously defined. In essence, this piece of code says: give me the report defined in the query, and store it in the variable named report:
+The following piece of code, allows us to select a particular report. The argument of this piece of code is an AWQL query. Luckily for us, we can use the query that we have previously defined in the variable named query. In essence, this piece of code says: give me the report defined in the query, and store it in the variable named report:
 
 ```javascript
 var report = AdsApp.report(query);
 ```
 
-The next step, is to get all the rows of that particular report. We do this by using the following piece of code. The variable named rows stores all the rows that match the query previously defined. Without it, we cannot access the data contained in the report:
+The next step is to get all the rows of that particular report. We do this by using the following piece of code. The variable named rows stores all the rows that match the query previously defined. Without it, we cannot access the data contained in the report:
 
 ```javascript
 var rows = report.rows();
 ```
 
-Now I’ll spend a couple of minutes on the while loop. With a while loop we are basically saying this to Google Ads: as long as the condition in the round brackets is true, keep doing the instructions mentioned inside the while loop:
+Now I’ll spend a couple of minutes on the while loop. With a while loop we are basically saying to Google Ads: as long as the condition in the round brackets is true, keep doing the instructions mentioned inside the while loop:
 
 ```javascript
 while("thisIstrue"){
@@ -186,7 +186,7 @@ In the next iteration, row.hasNext() will bump into the second row:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-1-google-adwords-scripts/image-4.jpg" alt="linearly separable data">
 
-Given that there is another row, row.hasNext() is true, so code inside of the while loop will be executed. With Logger.log(rows.next()), the second row will be printed.
+Given that there is another row, row.hasNext() is true, so the code inside of the while loop will be executed. With Logger.log(rows.next()), the second row will be printed.
 
 Later, row.hasNext() will bump into the last row, namely:
 
@@ -194,13 +194,13 @@ Later, row.hasNext() will bump into the last row, namely:
 
 Therefore, row.hasNext() will be true and the code inside the while loop will be once again executed. As a consequence, Logger.log(rows.next()) will print the third row.
 
-After the third row there are no more rows, so row.hasNext(), which answers the question: “is there another row?” will be false. Therefore, the while loop will stop.
+After the third row there are no more rows, so row.hasNext(), which answers the question: “is there another row?”, will be false. Therefore, the while loop will stop.
 
 Now that the code is complete, we can preview the results by clicking on the preview button on the bottom right corner:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-1-google-adwords-scripts/image-6.jpg" alt="linearly separable data">
 
-Now, to preview the results click on Logs:
+Now, to see the the result click on Logs:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-1-google-adwords-scripts/image-7.jpg" alt="linearly separable data">
 
@@ -208,15 +208,15 @@ If you have done everything correctly, here is what you should see (I covered th
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-1-google-adwords-scripts/image-8.jpg" alt="linearly separable data">
 
-Each timestamp represents the data of a particular row. From the first row, we can see that that particular keyword has generated 14718 impressions and 23.18 conversions. If you keep going to the right you’ll see the rest of the data, namely the ad group name, keyword and clicks.
+Each timestamp represents the data of a particular row. From the first row, we can see that the first keyword has generated 14,718 impressions and 23.18 conversions. If you keep going to the right you’ll see the rest of the data, namely the ad group name, keyword and clicks.
 
-Congratulations! You have just created a Google AdWords script that retrieves data from a Google AdWords report . In this case, we’ve used the “keywords performance report”, but you can apply the same process to any report.
+Congratulations! You have just created a Google AdWords script that retrieves data from a Google AdWords report :). In this case, we’ve used the “keywords performance report”, but you can apply the same process to any report.
 
-[Here](https://github.com/ArbenKqiku/portfolio-code/blob/master/adwords-script-awql-query.js) you can find the entire code used in this post.
+[Here](https://github.com/ArbenKqiku/portfolio-code/blob/master/adwords-script-awql-query.js) you can find the entire code used in this post and run it in the Google AdWords scripts' console.
 
 If you have any questions, have a look at the official [Google AdWords scripts group](https://groups.google.com/forum/#!forum/adwords-scripts). It is possible that the question that you would like to ask has already been asked. The group is moderated by actual Google employees who are extremely competent and are pretty reactive (they usually reply within a day).
 
-If you are interested in Google AdWords scripts and would like to learn more, you can add me on [LinkedIn](https://www.linkedin.com/in/arben-kqiku-301457117/). Also, in the agency that I work for, [comtogether](https://www.comtogether.com/) we develop custom scripts for our clients. If you have a particular request, hit me a message!
+If you are interested in Google AdWords scripts and would like to learn more, you can add me on [LinkedIn](https://www.linkedin.com/in/arben-kqiku-301457117/). Also, at the agency that I work for, [comtogether](https://www.comtogether.com/), we develop custom scripts for our clients. If you have a particular request, hit me a message!
 
 Happy coding,
 
