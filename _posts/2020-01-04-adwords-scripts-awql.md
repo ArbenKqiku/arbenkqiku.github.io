@@ -70,11 +70,13 @@ However, Google Ads doesn’t return that account yet, you need to give an expli
 get().next();
 ```
 
-Also, we still didn’t select anything, the account is simply in the memory of Google Ads, but we still cannot get data from it. By using the next piece of code, we are explicitly selecting that account. From now on, all the data that we’ll be retrieving will come from the account that we have just selected:
+Also, we still didn’t select anything, the account is simply in the memory of Google Ads, but we still cannot get data from it. By using the next piece of code, we are explicitly selecting that account.
 
 ```javascript
 MccApp.select();
 ```
+
+From now on, all the data that we’ll be retrieving will come from the account that we have just selected:
 
 # Building a query with the AdWords Query Language (AWQL)
 
