@@ -3,7 +3,7 @@ title: "Extract data with AdWords script and AWQL (AdWords Query Language)"
 date: 2020-01-01
 tags: [digital marketing, adwords scripts, google ads]
 header:
-  image: "/images/article-1-google-adwords-scripts/image-9.jpg"
+  image: "/images/article-1-google-adwords-scripts/jake-weirick-Q_RBVFFXR_g-unsplash.jpg"
 excerpt: "Learn how to extract data with AdWords scripts and AWQL (AdWords Query Language)"
 mathjax: "true"
 ---
