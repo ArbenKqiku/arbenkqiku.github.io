@@ -2,7 +2,7 @@
 title: "About"
 permalink: /about/
 header:
-  image: "/images/pascal-debrunner-UTbcrtjp18g-unsplash-copy.jpg"
+  image: "/images/pascal-debrunner-UTbcrtjp18g-unsplash-copy-2.jpg"
 ---
 
 I am a digital marketer, data scientist and polyglot.
