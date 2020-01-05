@@ -18,7 +18,7 @@ In this post, you will learn:
 
 # Google AdWords API reports
 
-Google AdWords API reports are simply reports that focus on one particular kind of data. For instance, the “keywords performance report” allows to query data related to keywords. In general, you can combine 3 types of fields to make query:
+Google AdWords API reports are simply reports that focus on one particular kind of data. For instance, the “keywords performance report” allows to query data related to keywords. In general, you can combine 3 types of fields to make a query:
 
 * *Attribute fields*: this is data related to settings or other fixed data, such an ad group’s status, bidding strategy, etc.
 * *Segment fields*: here you can find dimensions that will allow you to further segment your data. For example, you can segment data by date, conversion type or device.
@@ -44,7 +44,7 @@ Afterwards, you’ll need to authorize the script to make changes on your behalf
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-1-google-adwords-scripts/image-2.jpg" alt="linearly separable data">
 
-Let’s start writing some code. First of all, I’ll create this script at the MCC level. If you created the script at the account level, no problem, you can skip this step. Here is the code:
+Let’s start writing some code. First of all, we’ll create this script at the MCC level. If you created the script at the account level, no problem, you can skip this step. Here is the code:
 
 ```javascript
 function main(){
