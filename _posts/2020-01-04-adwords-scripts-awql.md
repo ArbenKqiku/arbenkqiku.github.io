@@ -170,7 +170,7 @@ The following piece of code means "print the next row":
 Logger.log(rows.next());
 ```
 
-For instance, let’s image that we had a table with three rows:
+For instance, let’s imagine that we have a table with three rows:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-1-google-adwords-scripts/image-11.jpg" alt="linearly separable data">
 
@@ -202,7 +202,7 @@ Now that the code is complete, we can preview the results by clicking on the pre
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-1-google-adwords-scripts/image-6.jpg" alt="linearly separable data">
 
-Now, to see the the result click on Logs:
+To see the the result click on Logs:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-1-google-adwords-scripts/image-7.jpg" alt="linearly separable data">
 
