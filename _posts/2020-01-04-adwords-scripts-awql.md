@@ -12,7 +12,7 @@ mathjax: "true"
 In this post, you will learn:
 
 * What are Google AdWords API reports
-* Access account data at the MCC level by creating an AdWords script
+* How to access account data at the MCC level by creating an AdWords script
 * How to build a query by using the AdWords Query Language (AWQL)
 * How to access report data by using a query
 
