@@ -7,7 +7,7 @@ header:
 
 I am a digital marketer, data scientist and polyglot.
 
-I help our clients achieve their goals through digital marketing. Here is what I do:
+I help clients achieve their goals through digital marketing. Here is what I do:
 
 * Develop custom digital marketing strategies (Which channels? Which messages? Which ad formats? Which tactics? Which audiences?)
 * Implement digital marketing campaigns by using various channels (SEA, Display, Shopping, YouTube, Facebook, Instagram, LinkedIn), in 4 languages (English, German, French & Italian) and by using several ad formats (dynamic ads, lead ads, collections, videos, etc.).

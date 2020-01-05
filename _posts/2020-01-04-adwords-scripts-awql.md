@@ -34,7 +34,7 @@ The “keywords performance report” is just an example. In fact, on the left s
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-1-google-adwords-scripts/image-1.jpg" alt="linearly separable data">
 
-If you want to query a particular report, it is important to look at the fields are available for that report. For instance, the attribute field “criteria”, which refers to keywords, is not available in the “ad group performance” report.
+If you want to query a particular report, it is important to look at the fields available for that report. For instance, the attribute field “criteria”, which refers to keywords, is not available in the “ad group performance” report.
 
 # Access account data from MCC
 
