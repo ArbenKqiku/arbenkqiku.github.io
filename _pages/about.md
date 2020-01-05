@@ -2,7 +2,7 @@
 title: "About"
 permalink: /about/
 header:
-  image: "/images/greg-rakozy.jpg"
+  image: "/images/waterfront.jpg"
 ---
 
 I am a digital marketer, data scientist and polyglot.
