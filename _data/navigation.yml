@@ -2,10 +2,8 @@
 main:
   - title: "About"
     url: /about/
-  - title: "AdWords Scripts"
-    url: /adwords-scripts/
-  - title: "R"
-    url: /bigquery-dplyr-to-sql/
+  - title: "Data Science, Digital Marketing & Programming"
+    url: /articles/
   # - title: "About"
   #   url: https://mmistakes.github.io/minimal-mistakes/about/
   # - title: "Sample Posts"
