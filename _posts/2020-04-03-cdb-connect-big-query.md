@@ -125,7 +125,7 @@ Query:
 
 ```SQL
 SELECT channelGrouping, count(*) AS count
-FROM `nameoftheproject.ga_sessions_sample`
+FROM `project.dataset.ga_sessions_sample`
 GROUP BY channelGrouping
 ORDER BY count DESC
 ```
