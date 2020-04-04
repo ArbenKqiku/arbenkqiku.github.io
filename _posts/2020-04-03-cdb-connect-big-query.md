@@ -2,6 +2,7 @@
 title: "Connect to Big Query through dbConnect & translate dplyr to SQL"
 date: 2020-04-03
 tags: [datascience, r, bigquery, sql, database, dbconnect]
+permalink: "bigquery-dbconnect-dplyr-to-sql"
 header:
   image: "/images/ryan-hutton-2.jpeg"
 excerpt: "Learn how to connect to big query & translate dplyr to SQL"
