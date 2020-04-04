@@ -77,9 +77,7 @@ Basically, what you are saying is: give me all the tables from the previously es
 
 Here is what it looks like:
 
-<img src="{{ site.url }}{{ site.baseurl }}/images/article-2-connect-to-bigquery/article-2-image-1" alt="linearly separable data">
-
-<img src="{{ site.url }}{{ site.baseurl }}/images/article-1-google-adwords-scripts/image-10.jpg" alt="linearly separable data">
+<img src="{{ site.url }}{{ site.baseurl }}/images/article-2-connect-to-bigquery/article-2-image-1.jpg" alt="linearly separable data">
 
 In our case, we will focus on the table named "ga_sessions_sample".
 
