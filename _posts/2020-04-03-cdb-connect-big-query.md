@@ -132,7 +132,7 @@ ORDER BY count DESC
 
 Result:
 
-<img src="{{ site.url }}{{ site.baseurl }}/images/article-2-connect-to-bigquery/image-6.jpg" alt="linearly separable data">
+<img src="{{ site.url }}{{ site.baseurl }}/images/article-2-connect-to-bigquery/image-7.jpg" alt="linearly separable data">
 
 # Conclusion
 
