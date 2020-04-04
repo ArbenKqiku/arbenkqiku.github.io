@@ -4,7 +4,7 @@ main:
     url: /about/
   - title: "AdWords Scripts"
     url: /adwords-scripts/
-  - title: "Big Query dbConnect"
+  - title: "R"
     url: /bigquery-dplyr-to-sql/
   # - title: "About"
   #   url: https://mmistakes.github.io/minimal-mistakes/about/
