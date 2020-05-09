@@ -4,7 +4,7 @@ date: 2020-05-09
 tags: [docker, google cloud, big query, cloud runner]
 permalink: "create-docker-image-with-r-and-deploy-as-cron-job-on-google-cloud"
 header:
-  image: "/images/article-2-connect-to-bigquery/nasa-picture.jpeg"
+  image: "/images/article-3-docker-tutorial/nasa-picture.jpeg"
 excerpt: "Create a Docker Image and deploy it on Google Cloud as a Cron Job by using R"
 mathjax: "true"
 ---
