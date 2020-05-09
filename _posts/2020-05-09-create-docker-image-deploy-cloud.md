@@ -4,7 +4,7 @@ date: 2020-05-09
 tags: [docker, google cloud, big query, cloud runner]
 permalink: "create-docker-image-with-r-and-deploy-as-cron-job-on-google-cloud"
 header:
-  image: "nasa-picture.jpeg"
+  image: "/images/article-2-connect-to-bigquery/nasa-picture.jpeg"
 excerpt: "Create a Docker Image and deploy it on Google Cloud as a Cron Job by using R"
 mathjax: "true"
 ---
@@ -157,7 +157,7 @@ We'll create the table later.
 
 Now, let's code a little bit.
 
-Install and activate the "bigrquery" and "tidyverse" packages:
+Install and load the "bigrquery" and "tidyverse" packages:
 
 ```r
 install.packages("bigrquery")
@@ -351,7 +351,7 @@ In is important that the text file Dockerfile.txt and its associated files (Serv
 
 Now, go to the terminal and type the following command:
 
-```docker
+```
 docker build -t docker-tutorial -f Dockerfile.txt .
 ```
 
@@ -359,7 +359,7 @@ This will create a new docker image named "docker-tutorial" by using the instruc
 
 Type the following command in the terminal:
 
-```docker
+```
 docker images
 ```
 
@@ -373,7 +373,7 @@ Success! You have created your first docker image :)
 
 As mentioned multiple times, a docker container is an instance of a docker image. Now that we have created our docker image, it is fairly easy to run our container. Go to the terminal and type the following command:
 
-```docker
+```
 docker run --rm docker-tutorial
 ```
 
