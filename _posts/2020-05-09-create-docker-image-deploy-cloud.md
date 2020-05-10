@@ -476,7 +476,7 @@ steps:
 ```
 A .yaml file simply contains the instructions on how to create a cloud build. It is similar to Dockerfile.txt, which contains the instructions on how to create a docker image.
 
-Once you have created the yaml file, put in the folder used for this tutorial. Then, create a build with the following command:
+Once you have created the yaml file, put it in the folder used for this tutorial. Then, create a build with the following command:
 
 ```r
 build = cr_build("docker-tutorial.yaml")
