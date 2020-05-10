@@ -174,7 +174,7 @@ Connect by using the Service Account Key that you previously saved. Maybe give i
 bq_auth("docker-tutorial-service.json", email = "name@gmail.com")
 ```
 
-Now you have authenticated with big query and call make calls to the Big Query API.
+Now you have authenticated with big query and can make calls to the Big Query API.
 
 Define three variable that contain our project, dataset and table name (I know, we don't have a table yet):
 
@@ -272,9 +272,9 @@ The "--rm" argument means that we'll remove the container once we're done with i
 
 The "-e" argument stands for environment. Here we can define environmental variables such as "PASSWORD" and "-p", which stands for port. The final argument "rocker/studio" is the docker image that we have downloaded and run as a docker container.
 
-Now, go to your browser and type "localhost:8787". As a user name, type "rstudio", and as password., the password that you used in your "docker run" command, in this case "123".
+Now, go to your browser and type "localhost:8787". As a user name, type "rstudio", and as password, the password that you used in your "docker run" command, in this case "123".
 
-Now you have an intance of Rstudio in your browser! Isn't that cool? :D
+Now you have an instance of Rstudio in your browser! Isn't that cool? :D
 
 Now, you can click on "stop" in the terminal to halt the docker container.
 
@@ -442,7 +442,7 @@ You should see the docker image that we have just pushed:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-3-docker-tutorial/image-25.jpg" alt="linearly separable data">
 
-Congrats! You have just pushed a docker image to the container registry! :D
+Congrats! You have just pushed a docker image to the Container Registry! :D
 
 # How to configure the GoogleCloudRunner package
 
@@ -476,7 +476,7 @@ steps:
 ```
 A .yaml file simply contains the instructions on how to create a cloud build. It is similar to Dockerfile.txt, which contains the instructions on how to create a docker image.
 
-Once you have create the yaml file, put in the folder used for this tutorial. Then, create a build with the following command:
+Once you have created the yaml file, put in the folder used for this tutorial. Then, create a build with the following command:
 
 ```r
 build = cr_build("docker-tutorial.yaml")
