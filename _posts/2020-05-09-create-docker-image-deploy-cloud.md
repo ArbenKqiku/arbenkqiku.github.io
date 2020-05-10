@@ -398,7 +398,7 @@ Before deploying a docker image on Google Cloud, you need to download the [Googl
 
 To do so, open a new a new terminal, it is better than using the R terminal.
 
-Once you have done that, type the following command in the terminal:
+Once you have installed the Google Cloud SDK, type the following command in the terminal:
 
 ```
 gcloud auth login
