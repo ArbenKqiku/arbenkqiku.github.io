@@ -10,7 +10,7 @@ mathjax: "true"
 ---
 
 # Introduction
-When you share your code with other people, it may not immediately work on their machine. They haven't installed certain packages, they have a different R version or maybe another operating system. These issues are called dependencies problems. Basically, one system needs another system in order to function properly, in the same way that one package needs the installation of another package.
+When you share your code with other people, it may not immediately work on their machine. They haven't installed certain packages, they have a different R version or maybe another operating system. These issues are called dependency problems. Basically, one system needs another system in order to function properly, in the same way that one package needs the installation of other packages to function properly.
 
 This is where Docker comes in. Docker solves all reproducibility and dependency problems.
 
@@ -38,15 +38,15 @@ In this tutorial, you will learn:
 * How to schedule a cron job by using a cloud build
 
 # Docker
-A docker container is like a machine that contains the instructions to run your code (which packages to install, which files to read, which scripts to run, etc.). No matter where you run your docker container, the instructions will ALWAYS be the same. 
+A docker container is like a machine that contains the instructions to run your code (which packages to install, which files to read, which scripts to run, etc.). No matter where you run your docker container, the instructions will ALWAYS be the same, so your container will always run properly. 
 
 This offers many advantages:
 
 * Shareability: you can share your container with whomever you want and it will run flawlessly on their machine.
-* Portability: you can create your container in your machine and run it in the cloud.
-* Scalability: you can scale your docker container as much as you want.
+* Portability: you can create a container in your machine and run it in the cloud.
+* Scalability: you can scale your container as much as you want.
 * Reproducibility: As the dependencies are defined inside of the container, it will always run in the same way no matter the machine.
-* Independency: docker containers work with any language and can contain multiple languages. In addition, other people can easily integrate your container in their code, even if they are using another language. For instance, this comes handy if you have developed a machine learning model in R, but the production team uses Python.
+* Language-agnostic: docker containers work with any language and can contain multiple languages. In addition, other people can easily integrate your container in their code, even if they are using another language. For instance, this comes handy if you have developed a machine learning model in R, but the production team uses Python.
 
 # Docker Image Vs. Docker Container
 If you are familiar with object oriented programming, a docker image is like a class, whereas a docker container is an instance of that class. In summary, a docker container is an instance of a docker image. As a consequence, in order to run a docker container, you first need to create a docker image.
@@ -66,7 +66,7 @@ You need to activate billing in order to use your Google Cloud account. This is 
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-3-docker-tutorial/image-4.jpg" alt="linearly separable data">
 
-# How to connect to activate APIs on Google Cloud
+# How to activate APIs on Google Cloud
 
 Once you have a Google Cloud Project, you need to activate its different services. For instance, if you wanted to use big query to store your data, you would need to activate the Big Query API.
 
@@ -106,7 +106,7 @@ After you have given a name to your application, click on scope, and add all API
 
 You can then click on save.
 
-Now, click on credentials and create all the 3 things required: API Keys, OAuth client ID and Service Accounts:
+Now, click on credentials and create all the 3 things required: API Keys, OAuth client ID and Service Account:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-3-docker-tutorial/image-9.jpg" alt="linearly separable data">
 
@@ -114,9 +114,11 @@ For the OAuth client ID, select "Other":
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-3-docker-tutorial/image-10.jpg" alt="linearly separable data">
 
-When you create Service Accounts, enable all the roles that you see in the image below:
+When you create Service Account, enable all the roles that you see in the image below:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-3-docker-tutorial/image-8.jpg" alt="linearly separable data">
+
+This is important so that the docker container can make changes on your behalf. Our container will run in a non-interactive session, which means we cannot manually authorize the container to make changes on our behalf. This means we need to give consent beforehand by adding roles to our Service Account Key.
 
 Now, let's download our Service Account Key. First, click on your service account key:
 
@@ -124,7 +126,7 @@ Now, let's download our Service Account Key. First, click on your service accoun
 
 Then click on "Create Key".
 
-We'll use this to connect to big query in a non-interactive session. A non-interactive session means the google cloud authentication is done automatically by the server, without a human manually consenting.
+We'll use this to connect to big query in a non-interactive session.
 
 Save this somewhere in your computer as we'll use it later.
 
@@ -169,7 +171,7 @@ library(tidyverse)
 Connect by using the Service Account Key that you previously saved. Maybe give it a easier name to remember. The first argument is the path to your Service Account Key, the second argument is the email associated with that Service Account Key (basically, the email with which you created your Google Cloud Proejct):
 
 ```r
-bq_auth("docker-tutorial-client.json", email = "name@gmail.com")
+bq_auth("docker-tutorial-service.json", email = "name@gmail.com")
 ```
 
 Now you have authenticated with big query and call make calls to the Big Query API.
@@ -264,11 +266,11 @@ docker run --rm -e PASSWORD=123 -p 8787:8787 rocker/rstudio
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-3-docker-tutorial/image-17.jpg" alt="linearly separable data">
 
-If the image is not present locally on your machine, your computer will look for it on docker hub (similar to GitHub, but for Docker ImageS), and if it exists, it will download it.
+If the image is not present locally on your machine, your computer will look for it on docker hub (similar to GitHub, but for Docker Images), and if it exists, it will download it.
 
 The "--rm" argument means that we'll remove the container once we're done with it, otherwise it will be saved on your machine. For example, if you have a daily cron job it means that the container will be saved every day and will occupy a lot of space eventually.
 
-The "-e" argument stands for environment. Here we can define environmental variables such as "PASSWORD" and "-p", which stands for port. The final argument "rocker/studio" is that the docker image that we have download and run as a docker container.
+The "-e" argument stands for environment. Here we can define environmental variables such as "PASSWORD" and "-p", which stands for port. The final argument "rocker/studio" is the docker image that we have downloaded and run as a docker container.
 
 Now, go to your browser and type "localhost:8787". As a user name, type "rstudio", and as password., the password that you used in your "docker run" command, in this case "123".
 
@@ -292,7 +294,7 @@ Here is an example:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-3-docker-tutorial/image-18.jpg" alt="linearly separable data">
 
-Here is the script that we'll use. Copy it and save it in your folder.
+Here is the script that we'll use. Copy it and save it in your folder under "big-query-tutorial.R". Don't forget to change the name of your Service Account Key, the email associated to it and the big query project, dataset and table parameters.
 
 ```r
 library(bigrquery)
@@ -341,12 +343,12 @@ RUN R -e "install.packages('bigrquery', repos = 'http://cran.us.r-project.org')"
 
 This is important, otherwise when we'll run the script we won't be able to load the "bigrquery" package, as it doesn't exist in the docker image.
 
-With these commands we are adding the Service Account Key and the script that we'll run. After the name of the files, we have added the folder in which we'll save the files, in this case /home/rstudio:
+With these commands we are adding the Service Account Key and the script that we'll run. After the name of the files, we have added the folder in which we'll save the files, in this case /home/rstudio. This will make sure that the files are available for our script:
 ```
 ADD docker-tutorial-service.json /home/rstudio
 ADD big-query-tutorial.R /home/rstudio
 ```
-Finally, the following command launches the script that we have added. In is important to define the entire path:
+Finally, the following command launches the script that we have added. In is important to define the entire path.:
 ```
 CMD Rscript /home/rstudio/big-query-tutorial.R
 ```
@@ -392,7 +394,7 @@ Now that we know that our docker image works properly, we can deploy it to Googl
 
 # How to deploy a docker image on Google Cloud
 
-Before deploying a docker image on Google Cloud, you need to download the [Google Cloud SDK and install it](https://cloud.google.com/sdk/docs).
+Before deploying a docker image on Google Cloud, you need to download the [Google Cloud SDK](https://cloud.google.com/sdk/docs) and install it.
 
 To do so, open a new a new terminal, it is better than using the R terminal.
 
@@ -422,7 +424,7 @@ Then, you should type the following command:
 docker push eu.gcr.io/docker-tutorial-xxxxx/docker-tutorial:latest
 ```
 
-This command contains the docker command "docker push", which pushes the docker image in the Google Cloud Cointainer Registry. Then, it is followed by "hostname/project-id/local-image-name:tag".
+This command contains the docker command "docker push", which pushes the docker image to the Google Cloud Cointainer Registry. Then, it is followed by "hostname/project-id/local-image-name:tag".
 
 I know it is not easy to remember these commands, so I have created a [google sheet](https://docs.google.com/spreadsheets/d/1F3fbAyqPqLJ7mwTimfQxjcfnF8slzaj4UDoimIn9eEU/edit#gid=0) which concatenates the different elements. Make a copy of this sheet, replace the elements with your information and copy paste the commands.
 
@@ -439,6 +441,8 @@ Now, go to the Google Cloud Console, type "container registry" and click on it:
 You should see the docker image that we have just pushed:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-3-docker-tutorial/image-25.jpg" alt="linearly separable data">
+
+Congrats! You have just pushed a docker image to the container registry! :D
 
 # How to configure the GoogleCloudRunner package
 
@@ -468,8 +472,9 @@ Here is a mockup example for me:
 
 ```yaml
 steps:
-- name: 'eu.gcr.io/docker-tutorial/feafaefaefeafeafeafnaelfenapifnaeifaenfioaefonae'
+- name: 'eu.gcr.io/docker-tutorial/testestetestestestestesttestest'
 ```
+A .yaml file simply contains the instructions on how to create a cloud build. It is similar to Dockerfile.txt, which contains the instructions on how to create a docker image.
 
 Once you have create the yaml file, put in the folder used for this tutorial. Then, create a build with the following command:
 
@@ -505,7 +510,7 @@ You should be able to see the cron job:
 
 # Conclusion
 
-Youu made it to the end of this tutorial, congratulations :) 
+You made it to the end of this tutorial, congratulations :) 
 
 In this tutorial, you learnt:
 
@@ -527,7 +532,7 @@ You can now do wonders with this knowledge:
 * Integrate your code in other developers' code, even if they are using another language
 * Share you code with others, knowing that it will always run smoothly
 * Deploy your code into production by using Google Cloud or other cloud services
-* Create cron jobs on Google Cloud and do not worry about your code running
+* Create cron jobs on Google Cloud to put code into production
 * Make calls to the Big Query API in a non-interactive environment
 
 If you enjoyed this tutorial, don't hesitate to connect with me on [LinkedIn](https://www.linkedin.com/in/arben-kqiku-301457117/)
