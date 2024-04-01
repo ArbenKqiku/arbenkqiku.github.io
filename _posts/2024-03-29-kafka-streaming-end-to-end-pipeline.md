@@ -39,7 +39,7 @@ mathjax: "true"
     - [Schedule and Run the Entire Pipeline](#schedule-and-run-the-entire-pipeline)
 
 # Introduction
-The UK's Companies House API provides a complete dataset up to the previous month. Afterwards, you can stream real-time data from its streaming API. The goal of this project is to progressively integrate streaming data in the complete UK's companies data set.
+The UK's Companies House API provides a complete dataset up to the previous month. Afterwards, you can stream real-time data from its streaming API. The goal of this project is to progressively integrate streaming data in the complete UK's companies data set. [Here] you can find the GitHub repository with all the code snippets, although I also included them in this guide.
 
 # Set-up Google Platform, a Virtual Machine and Connect to it Remotely through Visual Studio Code
 ## Create a Google Cloud Project
