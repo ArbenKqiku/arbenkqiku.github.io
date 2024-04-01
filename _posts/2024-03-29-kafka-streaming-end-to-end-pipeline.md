@@ -16,20 +16,20 @@ mathjax: "true"
     - [Create a Virtual Machine](#create-a-virtual-machine)
     - [Create SSH Keys and Access VM Remotely](#create-ssh-keys-and-access-vm-remotely)
     - [Access VM Through Visual Studio Code (VS Code)](#access-vm-through-visual-studio-code-vs-code)
-- [Stream from UK's Company House API and Produce to Kafka](#streaming)
+- [Stream from UK's Companies House API and Produce to Kafka](#streaming)
     - [Create a GitHub Repository](#create-a-github-repository)
     - [Stream data from UK’s Companies House](#stream-data-from-uks-company-house)
     - [What's Kafka](#what-is-kafka)
     - [Create a Kafka Cluster](#create-a-kafka-cluster)
     - [Produce Simulated Data to a Kafka Topic](#produce-simulated-data-to-a-kafka-topic)
-    - [Produce UK's Company House Data to a Kafka Topic](#produce-uks-company-house-data-to-a-kafka-topic)
+    - [Produce UK's Companies House Data to a Kafka Topic](#produce-uks-company-house-data-to-a-kafka-topic)
 - [Containerize our Application](#containerize-our-application)
     - [Create a Docker Container of our Application](#create-a-docker-container-of-our-application)
 - [From Kafka to BigQuery through Mage](#from-kafka-to-bigquery-through-mage)
     - [Install Mage](#install-mage)
     - [Consume Data from Kafka Topic](#consume-data-from-kafka-topic)
     - [Send Streamed Data to BigQuery](#send-streamed-data-to-bigquery)
-    - [Create Table that Contains all UK's Company House Data](#create-table-that-contains-all-uks-company-house-data)
+    - [Create Table that Contains all UK's Companies House Data](#create-table-that-contains-all-uks-company-house-data)
 - [Apply Transformations with dbt (data build tool)](#apply-transformations-with-dbt-data-build-tool)
     - [How to Set-Up dbt](#how-to-set-up-dbt)
     - [Create dbt Data Sources](#create-dbt-data-sources)
@@ -37,6 +37,9 @@ mathjax: "true"
     - [Test the Entire Pipeline in a Development Environment](#test-the-entire-pipeline-in-a-development-environment)
     - [ Test the Pipeline in Production](#test-the-pipeline-in-production)
     - [Schedule and Run the Entire Pipeline](#schedule-and-run-the-entire-pipeline)
+
+# Introduction
+The UK's Companies House API provides a complete dataset up to the previous month. Afterwards, you can stream real-time data from its streaming API. The goal of this project is to progressively integrate streaming data in the complete UK's companies data set.
 
 # Set-up Google Platform, a Virtual Machine and Connect to it Remotely through Visual Studio Code
 ## Create a Google Cloud Project
@@ -285,7 +288,7 @@ We can see that it is a GCP (Google Cloud Platform) machine.
 
 Congrats! We connected to the VM remotely by using VS code.
 
-# Stream from UK's Company House API and Produce to Kafka
+# Stream from UK's Companies House API and Produce to Kafka
 
 ## Create a GitHub Repository
 
@@ -898,13 +901,13 @@ Below, you should see the messages that we just produced to the topic:
 
 This is awesome! 
 
-## Produce UK's Company House Data to a Kafka Topic
+## Produce UK's Companies House Data to a Kafka Topic
 
 So far, we were able to do 2 things:
-* Stream data continuously from UK's Company House API
+* Stream data continuously from UK's Companies House API
 * Produce simulated data to our Kafka topic
 
-Now, to integrate these 2 scripts, we need to stream data from UK's Company House API and produce it (send it) to our Kafka topic.
+Now, to integrate these 2 scripts, we need to stream data from UK's Companies House API and produce it (send it) to our Kafka topic.
 
 Create a file named `producer_company_house.py` and paste the following code:
 
@@ -1038,7 +1041,7 @@ for topic, message in topics.items():
     producer.produce(topic, key=message["company_number"].encode('utf-8'), value=json.dumps(message).encode('utf-8'), callback=delivery_callback)
 ```
 
-If you type the following code in your terminal `python3 producer_company_house.py getting_started.ini`, it should stream data from UK's Company House and produce it to the Kafka topic <span style="color: white; background-color: black;">company_house</span>. If you go on the Confluent console, you should see incoming messages:
+If you type the following code in your terminal `python3 producer_company_house.py getting_started.ini`, it should stream data from UK's Companies House and produce it to the Kafka topic <span style="color: white; background-color: black;">company_house</span>. If you go on the Confluent console, you should see incoming messages:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/10-company-house-kafka/image-1.png" alt="linearly separable data">
 
@@ -1239,13 +1242,13 @@ docker images
 
 Now that we know that we can produce data to Kafka, you can stop your Docker container.
 
-So far, we've developed a Kafka producer to stream data from the UK's Company House API to a Kafka topic. This functionality is packaged into a Docker image, from which we've launched a Docker container. I would say that this is quite an achievement, congrats!
+So far, we've developed a Kafka producer to stream data from the UK's Companies House API to a Kafka topic. This functionality is packaged into a Docker image, from which we've launched a Docker container. I would say that this is quite an achievement, congrats!
 
 Up until now, we produced data to a Kafka topic. Right now, we'll consume data by using Mage, a data orchestrator.
 
 # From Kafka to BigQuery through Mage
 ## Install Mage
-In essence, a data orchestrator allows to build ETL (extract, transform and load) date pipelines. That means extracting data from one or multiple systems, apply some transformations to it, and then export it in another system, such as a data warehouse. Mage is a modern and very user-friendly orchestrator.
+A data orchestrator allows to build ETL (extract, transform and load) data pipelines. That means extracting data from one or multiple systems, apply some transformations to it, and then export it in another system, such as a data warehouse. Mage is a modern and very user-friendly orchestrator.
 
 [Here](https://github.com/mage-ai/mage-zoomcamp) is the repo for the installation guide, but we'll go through the installation here as well.
 
@@ -1301,7 +1304,7 @@ Give a name to your firewall rule, then select the following options and click o
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/14-install-mage/image-6.png" alt="linearly separable data">
 
-With, we're basically allowing ingress traffic through port 6789, which is where Mage is located. Then, go back to your VM, copy your external IP address and type it followed by `:6789`. This is what it looks like in my case:
+With this, we're basically allowing ingress traffic through port 6789, which is where Mage is located. Then, go back to your VM, copy your external IP address and type it followed by `:6789`. This is what it looks like in my case:
 
 ```bash
 34.65.113.154:6789
@@ -1310,11 +1313,6 @@ With, we're basically allowing ingress traffic through port 6789, which is where
 Now, you should be able to access Mage via the external IP address:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/14-install-mage/image-7.png" alt="linearly separable data">
-
-Before the next section, I would like to share a couple of nifty Docker tricks that I wish I new earlier. While Mage is running, it is possible that you cannot interact with the terminal. To open a new terminal window, click on the *+* icon at the top right:
-
-<img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/14-install-mage/image-8.png" alt="linearly separable data">
-
 
 ## Consume Data from Kafka Topic
 
@@ -1358,7 +1356,7 @@ sasl_config:
     password: /rmTFMqsvD4/CEs7tJEZAD6/NV9Oabcabcaabcabcaabcabcaabcabcaabcabca
 ```
 
-In a streaming pipeline using Kafka, t is not possible to consume data with a simple Data loader block, we need to a Transformer block. Click on *Transformer* > *Python* > *Generic (no template)*:
+In a streaming pipeline using Kafka, it is not possible to consume data with a simple Data loader block, we also need to add a Transformer block. Click on *Transformer* > *Python* > *Generic (no template)*:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/15-consume-mage-kafka/image-5.png" alt="linearly separable data">
 
@@ -1372,7 +1370,7 @@ One of the coolest things on Mage is that you can visually see how the elements 
 
 Also, with simple drag and drop you change how the various blocks interact with each other.
 
-Anyway, now, we are ready to consume data. However, we are currently not producing any. We're not going to spin a Kubernetes cluster, as we're simply testing the pipeline, but we can simply run the Docker container that we created previously. So, let's see what is the container id of my Docker container:
+Anyway, now, we are ready to consume data. However, we are currently not producing any. We can simply start the Docker container that we created previously. So, let's see what is the container id of my Docker container:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/15-consume-mage-kafka/image-7.png" alt="linearly separable data">
 
@@ -1398,7 +1396,7 @@ Congrats! As a next step, we'll send the streamed data to BigQuery.
 
 ## Send Streamed Data to BigQuery
 
-Now, let's send the data that we're streaming to BigQuery. To do that, we first need to create a data set on BigQuery. On BigQuery, a data set is the equivalent of a database in other systems. So, type <span style="color: white; background-color: black;">big query</span> and click on *BigQuery*:
+Now, let's send the data that we're streaming to BigQuery. To do that, we first need to create a data set in BigQuery. In BigQuery, a data set is the equivalent of a database in other systems. So, type <span style="color: white; background-color: black;">big query</span> and click on *BigQuery*:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/16-streamed-data-to-big-query/image-1.png" alt="linearly separable data">
 
@@ -1426,7 +1424,7 @@ Give a name to your service account and click on *CREATE AND CONTINUE*:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/16-streamed-data-to-big-query/image-7.png" alt="linearly separable data">
 
-This service account will only interact with BigQuery, so I only gave it `BigQuery Admin` permissions. If you wanted your service account to interact with other resources, you should extend your permissions. Click on *CONTINUE*:
+This service account will only interact with BigQuery, so I only gave it `BigQuery Admin` permissions. If you want your service account to interact with other resources, you should extend your permissions. Click on *CONTINUE*:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/16-streamed-data-to-big-query/image-8.png" alt="linearly separable data">
 
@@ -1450,7 +1448,7 @@ Select *JSON* and click on *CREATE*:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/16-streamed-data-to-big-query/image-13.png" alt="linearly separable data">
 
-This will download the credentials of your service account, that we'll use to make changes on BigQuery when in a non-interactive environement. To add the credentials to your VM, drag them to this area:
+This will download the credentials of your service account that we'll use to make changes on BigQuery when in a non-interactive environement. To add the credentials to your VM, drag them to this area:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/16-streamed-data-to-big-query/image-14.png" alt="linearly separable data">
 
@@ -1461,7 +1459,7 @@ One of the worst mistakes you could make is to inadvertently publish your creden
 *.json
 ```
 
-Currently, we've only created a dataset on BigQuery. To begin streaming data, we need to create a table. So, let's start by pushing some mock streaming data to a new table. Open a new python file and paste this code:
+Currently, we've only created a dataset in BigQuery. To begin streaming data, we need to create a table. So, let's start by pushing some mock streaming data to a new table. Open a new python file and paste this code:
 
 ```python
 import io
@@ -1497,7 +1495,7 @@ job = client.load_table_from_dataframe(
 )
 ```
 
-This loads service account credentials from a JSON key file located at '/home/arbenkqiku/streaming-pipeline/streaming-pipeline-418713-7f7d915b1fc7.json'. These credentials are used to authenticate with Google Cloud services, specifically BigQuery.
+The following piece of code loads service account credentials from a JSON key file located at `/home/arbenkqiku/streaming-pipeline/streaming-pipeline-418713-7f7d915b1fc7.json`. These credentials are used to authenticate with Google Cloud services, specifically BigQuery.
 
 ```python
 credentials = service_account.Credentials.from_service_account_file(
@@ -1505,7 +1503,7 @@ credentials = service_account.Credentials.from_service_account_file(
 )
 ```
 
-This initializes a BigQuery client using the obtained credentials and specifies the project ID associated with those credentials and creates a BigQuery load job configuration (job_config):
+The next code snippet initializes a BigQuery client using the obtained credentials and specifies the project ID associated with those credentials and creates a BigQuery load job configuration (job_config):
 
 ```python
 client = bigquery.Client(project=credentials.project_id, credentials=credentials)
@@ -1522,7 +1520,7 @@ df['date_of_creation'] = pd.to_datetime(df['date_of_creation'])
 df['published_at'] = pd.to_datetime(df['published_at'])
 ```
 
-Here we define the destination table ID (table_id) where the DataFrame data will be loaded. This table is located in the 'company_house' dataset within the specified project.
+Here we define the destination table ID (table_id) where the DataFrame data will be loaded. This table is located in the `company_house` dataset within the specified project.
 
 ```python
 table_name = 'company_house_stream'
@@ -1546,6 +1544,8 @@ job = client.load_table_from_dataframe(
 ```
 
 If you now go on BigQuery, you should see a table named <span style="color: white; background-color: black;">company_house_stream</span>. If you click on *PREVIEW*, you should see the mock-up data that we sent.
+
+<img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/16-streamed-data-to-big-query/image-15.png" alt="linearly separable data">
 
 Now, let's got back on Mage to the transfomer block, remove the existing code and add this code:
 
@@ -1612,7 +1612,7 @@ def transform(messages: List[Dict], *args, **kwargs):
     return df
 ```
 
-Here we iterate over each message in the messages list and append it to a new list called incoming_messages. This is essentially collecting all the incoming messages into a single list.
+Let's analyze this code. Here we iterate over each message in the messages list and append it to a new list called incoming_messages. This is essentially collecting all the incoming messages into a single list.
 
 ```python
 # define container for incoming messages
@@ -1644,7 +1644,7 @@ credentials = service_account.Credentials.from_service_account_file(
 )
 ```
 
-Since we're within Mage, the location needs to be in Mage. Once of the cool features of Mage is that you can access its internal terminal, and see what files are available and what are the respective paths:
+Since we're within Mage, the location needs to be in Mage. One of the cool features of Mage is that you can access its internal terminal, and see what files are available and what are the respective paths:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/16-streamed-data-to-big-query/image-16.png" alt="linearly separable data">
 
@@ -1660,7 +1660,7 @@ Once we do that, we see that the credentials are available:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/16-streamed-data-to-big-query/image-19.png" alt="linearly separable data">
 
-Now we are to to test the pipeline! Go back to the terminal and start the Docker container that produces data to the Kafka topic. Once you see incoming data on Confluent, go to Mage and click on *Execute pipeline*:
+Now we are able to test the pipeline! Go back to the terminal and start the Docker container that produces data to the Kafka topic. Once you see incoming data on Confluent, go to Mage and click on *Execute pipeline*:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/16-streamed-data-to-big-query/image-20.png" alt="linearly separable data">
 
@@ -1677,16 +1677,16 @@ Here is approximately 1 minute later:
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/16-streamed-data-to-big-query/image-23.png" alt="linearly separable data">
 
 Congrats! We just built a working streaming pipeline, that:
-* Streams data from UK's Company House API
+* Streams data from UK's Companies House API
 * Produces it to a Kafka topic
 * Consumes it from a Kafka topic
 * And finally streams it to a BigQuery table
 
-## Create Table that Contains all UK's Company House Data
+## Create Table that Contains all UK's Companies House Data
 
-For now, let's stop our Docker container that produces data for the Kafka topic and cancel our pipeline on Mage. Next, we need to create a BigQuery table containing all the available data from the UK's Company House up to March 2024. I downloaded the data from [here](https://download.companieshouse.gov.uk/en_output.html) and cleaned it up. You can find the cleaned data [here](https://drive.google.com/drive/my-drive); please download it. In the next step, as we stream incoming data, we'll merge it with this table containg all the available data.
+For now, let's stop our Docker container that produces data for the Kafka topic and cancel our pipeline on Mage. Next, we need to create a BigQuery table containing all the available data from the UK's Companies House up to March 2024. I downloaded the data from [here](https://download.companieshouse.gov.uk/en_output.html) and cleaned it up. You can find the cleaned data [here](https://drive.google.com/drive/my-drive); please download it. In the next step, as we stream incoming data, we'll merge it with this table containg all the available data.
 
-Here is the script to send the overall table of UK's Company House data to BigQuery. Given the size of the table, namely 437 MB, I was not able to run the script in my VM so I had to run it locally, which took almost 15 minutes. Anyway, this does not have any incidence on our project as in the end everything will run programmatically in the cloud.
+Here is the script to send the overall table of UK's Companies House data to BigQuery. Given the size of the table, namely 437 MB, I was not able to run the script in my VM so I had to run it locally, which took almost 15 minutes. Anyway, this does not have any incidence on our project as in the end everything will run programmatically in the cloud.
 
 ```python
 import io
@@ -1718,7 +1718,7 @@ job = client.load_table_from_dataframe(
 )
 ```
 
-These are the only two aspects that change from the previous script. First of all, we read a csv of the clean data. Then, the table name changes.
+These are the only two aspects that differ from the previous script. First of all, we read a csv of the clean data. Then, the table name changes.
 
 ```python
 df = pd.read_csv("company_house_core_clean.csv")
@@ -1741,10 +1741,10 @@ In our case, we'll use dbt to create the following workflow:
 
 * (1) As new data is streamed in, we capture a snapshot of the latest information, which includes all data accumulated since the previous snapshot was taken.
 * (2) From this data, we extract the most recent timestamp available. This timestamp will be helpful for retrieving the next snapshot.
-* (3) Subsequently, we utilize the snapshot to update the overall UK's Company House data.
+* (3) Subsequently, we utilize the snapshot to update the overall UK's Companies House data.
 * This process repeats as we capture another snapshot of the most recent streamed data, using the last timestamp from the previous snapshot.
 
-This process enables continuous updates to the UK's Company House data as new data is streamed.
+This process enables continuous updates to the UK's Companies House data as new data is streamed.
 
 Let's set up dbt. Go to [this link](https://www.getdbt.com/) and click on *Create a free account*:
 
@@ -1810,7 +1810,7 @@ Select *BigQuery* and click on *Upload a Service Account JSON file*:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/17-dbt-installation/image-17.png" alt="linearly separable data">
 
-Select the `JSON file` (the credentials) that we previously created, the same that we used to upload the entire UK's Company House data set:
+Select the `JSON file` (the credentials) that we previously created, the same that we used to upload the entire UK's Companies House data set:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/17-dbt-installation/image-18.png" alt="linearly separable data">
 
@@ -1909,7 +1909,7 @@ Now, let's build our first model. Here we have an issue of the chicken of and th
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/18-dbt-data-sources/image-8.png" alt="linearly separable data">
 
-In the `staging` folder, create a file named `get_last_timestamp.sql` and paste the following code. Unfortunately, for some reason my site was not able to parse jinja code, so, I'll simply paste here an image of the code. In any case, you can find the code in my GitHub repo.
+In the `staging` folder, create a file named `get_last_timestamp.sql` and paste the following code. Unfortunately, for some reason my site was not able to parse jinja code, so, I'll simply paste here an image of the code. In any case, you can find the code in my [GitHub repo](https://github.com/ArbenKqiku/streaming-pipeline/tree/main/models/staging)
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/22-repair/image-1.png" alt="linearly separable data">
 
@@ -1919,7 +1919,7 @@ Here's a breakdown of what each part of the code does:
 
 The config part is a Jinja directive used to configure settings for the dbt model. In this case, it sets the materialization method for the dbt model to 'table', indicating that the results of the SQL query will be stored in a table.
 
-`select published_at from {{ source('staging', 'company_house_stream')}} order by published_at limit 1`: This is a SQL query written inside the Jinja template. It selects the 'published_at' column from the 'company_house_stream' table in the 'staging' schema. The `{{ source(...) }}` syntax is a Jinja function call that dynamically generates the name of the table based on the provided arguments.
+`select published_at from {{ source('staging', 'company_house_stream')}} order by published_at limit 1`: This is a SQL query written inside the Jinja template. It selects the `published_at` column from the `company_house_stream` table in the `staging` schema. The `{{ source(...) }}` syntax is a Jinja function call that dynamically generates the name of the table based on the provided arguments.
 
 In this query, we're selecting the 1st timestamp, as it is the 1st time that we are retrieving the streamed data. However, later we'll modify this query with:
 
@@ -1964,7 +1964,7 @@ Now, on BigQuery you should see a new dataset called `dbt_` followed by your use
 
 The dataset has this name because we're still in a development environement. Later, when we'll push our dbt models to production, a new dataset called `prod` will be created.
 
-While developing, given that we'll integrate the newly streamed data into the complete UK's Company House data, and given that our models will be pushed to the `dbt_arbenkqiku` dataset, we need to have the complete UK's Company House data in our development dataset as well. Create a new dbt model called `company_house_core.sql` and paste the following code:
+While developing, given that we'll integrate the newly streamed data into the complete UK's Companies House data, and given that our models will be pushed to the `dbt_arbenkqiku` dataset, we need to have the complete UK's Companies House data in our development dataset as well. Create a new dbt model called `company_house_core.sql` and paste the following code:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/22-repair/image-2.png" alt="linearly separable data">
 
@@ -1972,7 +1972,7 @@ Save the model and click on *Build*. In BigQuery, next to the development datase
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/18-dbt-data-sources/image-17.png" alt="linearly separable data">
 
-You should see a replica of the complete UK's Company House data:
+You should see a replica of the complete UK's Companies House data:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/18-dbt-data-sources/image-18.png" alt="linearly separable data">
 
@@ -2000,7 +2000,7 @@ Now, create a new dbt model named `snapshot_streamed_data.sql` and paste the fol
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/22-repair/image-3.png" alt="linearly separable data">
 
-In this code, by using the timestamp that we retrieved earlier, we only get the data that is newer then the last timestamp. This is reflected in the condition `stream.published_at > last_timestamp.published_at`. This ensure that we create a snapshot of the most recent data. Also, here I purposely modify the company status with `concat("test_", current_timestamp()) as company_status`. This is because later we will merge the snapshot of the streamed data with the main table, and I want to ensure that the data in the main table is properly updated. Of course, later we'll use the actual `company_status`. Save your dbt model and build it.
+In this code, by using the timestamp that we retrieved earlier, we only get the data that is newer then the last timestamp. This is reflected in the condition `stream.published_at > last_timestamp.published_at`. This ensures that we create a snapshot of the most recent data. Also, here I purposely modify the company status with `concat("test_", current_timestamp()) as company_status`. This is because later we will merge the snapshot of the streamed data with the main table, and I want to ensure that the data in the main table is properly updated. Of course, later we'll use the actual `company_status`. Save your dbt model and build it.
 
 If everything worked correctly, you should see a new table named `snapshot_streamed_data`:
 
@@ -2012,11 +2012,11 @@ Also, let's add this new table to our configuration file by adding this line:
 - name: snapshot_streamed_data
 ```
 
-Now, let's integrated the streamed data in the complete UK's Company House data. To do so, we need to replace the content of the dbt model called `company_house_core.sql` with the following code. This is because we want to update the BigQuery table called `company_house_core`:
+Now, let's integrate the streamed data in the complete UK's Companies House data. To do so, we need to replace the content of the dbt model called `company_house_core.sql` with the following code. This is because we want to update the BigQuery table called `company_house_core`:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/22-repair/image-4.png" alt="linearly separable data">
 
-This code snippet implements an incremental materialization strategy, which means updating the table instead of recreating it. Specifically, it updates rows based on a unique identifier called `company_number`. The model compares existing data with incoming data for each `company_number` and updates rows if there are any differences.
+The following code snippet implements an incremental materialization strategy, which means updating the table instead of recreating it. Specifically, it updates rows based on a unique identifier called `company_number`. The model compares existing data with incoming data for each `company_number` and updates rows if there are any differences.
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/22-repair/image-5.png" alt="linearly separable data">
 
@@ -2040,7 +2040,7 @@ where
     row_num = 1
 ```
 
-Now, we need to verify that the data has been updated correctly in the `company_house_core` table.  Ff we run this query in BigQuery, where we're essentially extracting the rows from the `company_house_core` table that match a `company_number` contained in the table `snapshot_streamed_data`:
+Now, we need to verify that the data has been updated correctly in the `company_house_core` table.  If we run this query in BigQuery, where we're essentially extracting the rows from the `company_house_core` table that match a `company_number` contained in the table `snapshot_streamed_data`:
 
 ```sql
 select
@@ -2063,7 +2063,7 @@ We can see that the column `company_status` matches the artifically created colu
 
 ## Test the Entire Pipeline in a Development Environment
 
-First of all, in the dbt model `get_last_timestamp.sql`, `order by published_at` with `order by published_at desc`, as we want to get the last timestamp. Also, replace the source from `{{ source('staging', 'company_house_stream')}}` to `{{ source('development', 'snapshot_streamed_data')}}` as we want to get the last timestamp from the most recent snapshot. This is what the final code looks like:
+First of all, in the dbt model `get_last_timestamp.sql`, replace `order by published_at` with `order by published_at desc`, as we want to get the last timestamp. Also, replace the source as we want to get the last timestamp from the most recent snapshot. This is what the final code looks like:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/22-repair/image-7.png" alt="linearly separable data">
 
@@ -2085,7 +2085,7 @@ Right now, we are on the development branch of our GitHub repo. To use our dbt m
 
 ## Test the Pipeline in Production
 
-In dbt production, a new dataset named `prod` will be created. However, the entire UK's Company House data does not exist in this dataset. So, in the dbt model `company_house_core.sql` replace the content with this code:
+In dbt production, a new dataset named `prod` will be created. However, the entire UK's Companies House data does not exist in this dataset. So, in the dbt model `company_house_core.sql` replace the content with this code:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/22-repair/image-8.png" alt="linearly separable data">
 
@@ -2097,7 +2097,7 @@ Click on *Create job* and then on *Deploy job*:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/20-dbt-production/image-2.png" alt="linearly separable data">
 
-Give a name to your job, add the command `dbt build --select company_house_core`, which essentially replicates the entire UK's Company House data, and click on *Save* at the top right:
+Give a name to your job, add the command `dbt build --select company_house_core`, which essentially replicates the entire UK's Companies House data, and click on *Save* at the top right:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/20-dbt-production/image-3.png" alt="linearly separable data">
 
@@ -2138,7 +2138,7 @@ sources:
       - name: snapshot_streamed_data
 ```
 
-`development` should be replaced with `production` in all the models. Also, in the model `company_house_core.sql` we can replace the code that replicates the entire UK's Company House data with the code that merges the most recent streamed data:
+`development` should be replaced with `production` in all the models. Also, in the model `company_house_core.sql` we can replace the code that replicates the entire UK's Companies House data with the code that merges the most recent streamed data:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/22-repair/image-9.png" alt="linearly separable data">
 
@@ -2177,7 +2177,7 @@ Now, select the job * <span style="color: white; background-color: black;">Core 
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/20-dbt-production/image-12.png" alt="linearly separable data">
 
-We can see that the data was successfully integrated in the entire UK's Company House data:
+We can see that the data was successfully integrated in the entire UK's Companies House data:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/20-dbt-production/image-13.png" alt="linearly separable data">
 
@@ -2264,7 +2264,7 @@ On Confluent, we can see that we're both producing and consuming 64 bytes per se
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/21-schedule/image-11.png" alt="linearly separable data">
 
-So, I let the entire pipeline run for a couple of hours and no issues were detected. The newly streamed data was successfully integrated into the entire UK's Company House data:
+So, I let the entire pipeline run for a couple of hours and no issues were detected. The newly streamed data was successfully integrated into the entire UK's Companies House data:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/21-schedule/image-12.png" alt="linearly separable data">
 
