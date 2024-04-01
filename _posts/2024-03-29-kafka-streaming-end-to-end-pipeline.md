@@ -1917,7 +1917,7 @@ This code snippet is written in Jinja templating language. This is used by dbt f
 
 Here's a breakdown of what each part of the code does:
 
-`{% config %}`: This is a Jinja directive used to configure settings for the dbt model. In this case, it sets the materialization method for the dbt model to 'table', indicating that the results of the SQL query will be stored in a table.
+The config part is a Jinja directive used to configure settings for the dbt model. In this case, it sets the materialization method for the dbt model to 'table', indicating that the results of the SQL query will be stored in a table.
 
 `select published_at from {{ source('staging', 'company_house_stream')}} order by published_at limit 1`: This is a SQL query written inside the Jinja template. It selects the 'published_at' column from the 'company_house_stream' table in the 'staging' schema. The `{{ source(...) }}` syntax is a Jinja function call that dynamically generates the name of the table based on the provided arguments.
 
