@@ -67,7 +67,7 @@ Our Docker containers will be within a virtual machine, because we want to run t
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/22-project-intro/image-5.png" alt="linearly separable data">
 
-To manage the flow of data from Kafka and forward it to downstream processes., we'll use Mage as an orchestrator. To ensure continuous operation, Mage we'll also be encapsulated in a Docker container:
+To manage the flow of data from Kafka and forward it to downstream processes, we'll use Mage as an orchestrator. To ensure continuous operation, Mage we'll also be encapsulated in a Docker container:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/22-project-intro/image-6.png" alt="linearly separable data">
 
@@ -79,7 +79,7 @@ This script will conduct an initial cleanup of the data and then stream it in re
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/22-project-intro/image-8.png" alt="linearly separable data">
 
-In BigQuery, initially we'll manually upload the entire dataset from the UK's Companies House into BigQuery. Afterwards, we'll utilize dbt (data build tool) to incrementally update the dataset with streaming data as it becomes available.
+In BigQuery, initially we'll manually upload the entire dataset from the UK's Companies House into BigQuery. Afterwards, we'll utilize dbt (data build tool) to incrementally update the dataset with streaming data as it becomes available:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/22-project-intro/image-9.png" alt="linearly separable data">
 
