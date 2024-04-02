@@ -38,7 +38,7 @@ mathjax: "true"
     - [ Test the Pipeline in Production](#test-the-pipeline-in-production)
     - [Schedule and Run the Entire Pipeline](#schedule-and-run-the-entire-pipeline)
 
-# Introduction
+# Goal of the Project and Explanation
 This guide aims to achieve two goals: stream data in real-time from [UK's Companies House](https://www.gov.uk/government/organisations/companies-house) and integrate it with the entire dataset as new data becomes available over time. As companies' details change or new companies are created, this data reaches UK's Companies House streaming API and becomes available to end users. The UK Companies House is an executive agency of the UK Government, responsible for incorporating and dissolving limited companies, registering company information, and making this information available to the public. Here is a simplified architecture of the project:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/22-project-intro/image-11.png" alt="linearly separable data">
