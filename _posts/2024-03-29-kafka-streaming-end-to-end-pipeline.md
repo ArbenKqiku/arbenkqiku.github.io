@@ -39,7 +39,11 @@ mathjax: "true"
     - [Schedule and Run the Entire Pipeline](#schedule-and-run-the-entire-pipeline)
 
 # Goal of the Project and Explanation
-This guide aims to achieve two goals: stream data in real-time from [UK's Companies House](https://www.gov.uk/government/organisations/companies-house) and integrate it with the entire dataset as new data becomes available over time. As companies' details change or new companies are created, this data reaches UK's Companies House streaming API and becomes available to end users. The UK Companies House is an executive agency of the UK Government, responsible for incorporating and dissolving limited companies, registering company information, and making this information available to the public. Here is a simplified architecture of the project:
+For this project we'll use data from from [UK's Companies House](https://www.gov.uk/government/organisations/companies-house). The UK Companies House is an executive agency of the UK Government, responsible for incorporating and dissolving limited companies, registering company information, and making this information available to the public.
+
+This guide aims to achieve two goals: stream data in real-time from UK's Companies House and integrate it with the entire dataset as new data becomes available over time.
+
+Here is a simplified architecture of the project:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/22-project-intro/image-11.png" alt="linearly separable data">
 
@@ -47,7 +51,9 @@ Here is the technical architecture:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/22-project-intro/basis.png" alt="linearly separable data">
 
-Let's go through the different steps. This first task is actually being able to stream data from UK's Companies House API:
+Let's go through the different steps. 
+
+The first task is actually being able to stream data from UK's Companies House API:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/22-project-intro/image-1.png" alt="linearly separable data">
 
@@ -59,7 +65,7 @@ Afterwards, we'll create a Kafka producer, a mechanism for streaming data to Kaf
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/22-project-intro/image-3.png" alt="linearly separable data">
 
-All of the previous steps involve several scripts and multiple packages. To simplify the deployment and mitigate dependency issues we'll encapsulate all components into a Docker container. In this way, we'll to able to stream data to our Kafka cluster with one simple line of code, `docker start container_id`:
+All of the previous steps involve several scripts and multiple packages. To simplify the deployment and mitigate dependency issues we'll encapsulate all components into a Docker container. In this way, we'll to able to stream data to our Kafka cluster with one simple line of code, `docker start container_id`.
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/22-project-intro/image-4.png" alt="linearly separable data">
 
@@ -79,11 +85,11 @@ This script will conduct an initial cleanup of the data and then stream it in re
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/22-project-intro/image-8.png" alt="linearly separable data">
 
-In BigQuery, initially we'll manually upload the entire dataset from the UK's Companies House into BigQuery. Afterwards, we'll utilize dbt (data build tool) to incrementally update the dataset with streaming data as it becomes available:
+In BigQuery, initially we'll manually upload the entire dataset from the UK's Companies House. Afterwards, we'll utilize dbt (data build tool) to incrementally update the dataset with streaming data as it becomes available:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/22-project-intro/image-9.png" alt="linearly separable data">
 
-Finally, we can visualize the data with our BI tool of preference. Note: data vizualization we'll not be covered in this guide.
+Finally, we can visualize the data with our BI tool of preference. However, this will not be covered in this guide.
 
 # Set-up Google Platform, a Virtual Machine and Connect to it Remotely through Visual Studio Code
 ## Create a Google Cloud Project
@@ -120,6 +126,8 @@ Now, at the top left corner, you should see the name of your project:
 Now, let's move to the next step, creating a virtual machine.
 
 ## Create a Virtual Machine
+
+<img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/22-project-intro/image-5.png" alt="linearly separable data">
 
 A virtual machine is essentially a computer within a computer. For instance, you can create a virtual machine on your local computer, completely separate from the physical hardware. In our case, we're opting to create a virtual machine in the cloud. Why? Because that's where our orchestrator, Mage, will reside. We need to host Mage on a machine that never shuts down to ensure the streaming pipeline can run continuously.
 
