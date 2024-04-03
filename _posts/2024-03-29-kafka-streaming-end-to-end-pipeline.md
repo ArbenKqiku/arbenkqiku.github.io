@@ -65,7 +65,7 @@ Afterwards, we'll create a Kafka producer, a mechanism for streaming data to Kaf
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/22-project-intro/image-3.png" alt="linearly separable data">
 
-All of the previous steps involve several scripts and multiple packages. To simplify the deployment and mitigate dependency issues we'll encapsulate all components into a Docker container. In this way, we'll to able to stream data to our Kafka cluster with one simple line of code, `docker start container_id`.
+All of the previous steps involve several scripts and multiple packages. To simplify the deployment and mitigate dependency issues we'll encapsulate all components into a Docker container. In this way, we'll be to able to stream data to our Kafka cluster with one simple line of code, `docker start container_id`.
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/22-project-intro/image-4.png" alt="linearly separable data">
 
@@ -73,11 +73,11 @@ Our Docker containers will be within a virtual machine, because we want to run t
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/22-project-intro/image-5.png" alt="linearly separable data">
 
-To manage the flow of data from Kafka and forward it to downstream processes, we'll use Mage as an orchestrator. To ensure continuous operation, Mage we'll also be encapsulated in a Docker container:
+To retrieve the flow of data from Kafka and forward it to downstream processes, we'll use Mage as an orchestrator. To ensure continuous operation, Mage we'll also be encapsulated in a Docker container:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/22-project-intro/image-6.png" alt="linearly separable data">
 
-In Mage, the initial block will retrieve data from the Kafka Cluster and pass it to a Python script:
+In Mage, the initial block will consume data from the Kafka Cluster and pass it to a Python script:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/22-project-intro/image-7.png" alt="linearly separable data">
 
@@ -366,9 +366,9 @@ This will clone our project locally. Now, we can make changes locally and push t
 
 ## Stream Data from UK’s Companies House
 
-The goal of this guide is to stream data in real time from [UK's Companies House](https://www.gov.uk/government/organisations/companies-house). The UK Companies House is an executive agency of the UK Government, responsible for incorporating and dissolving limited companies, registering company information, and making this information available to the public. Many services are available [digitally](https://idam-ui.company-information.service.gov.uk/), that means that you can register a company online or make modifications to a company you registered. These changes are then pushed through the [UK's Companies House Streaming API](https://developer-specs.company-information.service.gov.uk/streaming-api/reference/company-information/stream) and are available in real-time.
+<img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/22-project-intro/image-1.png" alt="linearly separable data">
 
-So, our goal right now will be to create a python script able to stream data in real time. Here the steps that we'll have to follow:
+So, our goal right now will be to create a python script able to stream data in real time from UK's Companies House streaming API. Here the steps that we'll have to follow:
 * [Register an account on the API](https://developer.company-information.service.gov.uk/)
 * [Create an application](https://developer.company-information.service.gov.uk/manage-applications)
 
@@ -694,7 +694,7 @@ As the next step, we'll stream our data to Kafka!
 
 ## What is Kafka?
 
-[Apache Kafka](https://kafka.apache.org/) is a streaming platform that is used for building real-time data pipelines and streaming applications. In simple terms, think of Apache Kafka as a large messaging system that allows different applications to communicate with each other by sending and receiving streams of data in real-time. Apache Kafka was originally developed by engineers at LinkedIn. Kafka was initially conceived to address the challenges LinkedIn faced in handling real-time data streams, such as user activity tracking, operational metrics, and logging. In 2011, Kafka was open-sourced and became an Apache Software Foundation project.
+[Apache Kafka](https://kafka.apache.org/) is a streaming platform that is used for building real-time data pipelines and streaming applications. In simple terms, think of Apache Kafka as a large messaging system that allows different applications to communicate with each other by sending and receiving streams of data in real-time. Apache Kafka was originally developed by engineers at LinkedIn. Kafka was conceived to address the challenges LinkedIn faced in handling real-time data streams, such as user activity tracking, operational metrics, and logging. In 2011, Kafka was open-sourced and became an Apache Software Foundation project.
 
 In Kafka, there are essentially producers and consumers of data.
 
@@ -1274,7 +1274,7 @@ For example:
 docker stop a2cd18c97c49
 ```
 
-To see restart a Docker container, type:
+To see restart a Docker container, you don't need to type `docker run image_name` again. Once the Docker container has been created, you can simply restart it:
 
 ```bash
 docker start container_id
@@ -1294,9 +1294,9 @@ docker images
 
 Now that we know that we can produce data to Kafka, you can stop your Docker container.
 
-So far, we've developed a Kafka producer to stream data from the UK's Companies House API to a Kafka topic. This functionality is packaged into a Docker image, from which we've launched a Docker container. I would say that this is quite an achievement, congrats!
+So far, we've developed a Kafka producer that streams data from the UK's Companies House API to a Kafka topic. This functionality is packaged into a Docker image, from which we've launched a Docker container. I would say that this is quite an achievement, congrats!
 
-Up until now, we produced data to a Kafka topic. Right now, we'll consume data by using Mage, a data orchestrator.
+Up until now, we produced data to a Kafka topic. Right now, we need to consume this data!
 
 # From Kafka to BigQuery through Mage
 ## Install Mage
