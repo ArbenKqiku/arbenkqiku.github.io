@@ -91,6 +91,8 @@ In BigQuery, initially we'll manually upload the entire dataset from the UK's Co
 
 Finally, we can visualize the data with our BI tool of preference. However, this will not be covered in this guide.
 
+The GitHub repository is available [here](https://github.com/ArbenKqiku/streaming-pipeline).
+
 # Set-up Google Platform, a Virtual Machine and Connect to it Remotely through Visual Studio Code
 ## Create a Google Cloud Project
 The first thing that we have to do is to [create a GCP project](https://cloud.google.com/?hl=en). In this project we'll host many of the things that we'll build, such as the application to produce streaming data, our orchestration tool, [Mage](https://www.mage.ai/), as well as our BigQuery database.
@@ -1300,7 +1302,11 @@ Up until now, we produced data to a Kafka topic. Right now, we need to consume t
 
 # From Kafka to BigQuery through Mage
 ## Install Mage
-A data orchestrator allows to build ETL (extract, transform and load) data pipelines. That means extracting data from one or multiple systems, apply some transformations to it, and then export it in another system, such as a data warehouse. Mage is a modern and very user-friendly orchestrator.
+A data orchestrator allows to build ETL (extract, transform and load) data pipelines. That means extracting data from one or multiple systems, apply some transformations to it, and then export it to another system, such as a data warehouse. Mage is a modern and very user-friendly orchestrator, that provides a visually appealing structure of your pipelines:
+
+<img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/22-project-intro/image-12.png" alt="linearly separable data">
+
+Also, with simple drag and drop you change how the various blocks interact with each other.
 
 [Here](https://github.com/mage-ai/mage-zoomcamp) is the repo for the installation guide, but we'll go through the installation here as well.
 
@@ -1330,7 +1336,7 @@ Finally, start the Docker container:
 docker compose up
 ```
 
-Then, go to ports in your VM, and click on the browser icon:
+Then, go to ports in your VM, and click on the browser icon next to port `6789`:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/14-install-mage/image-1.png" alt="linearly separable data">
 
@@ -1416,13 +1422,7 @@ Give a name to your block and click on *Save and add*:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/15-consume-mage-kafka/image-6.png" alt="linearly separable data">
 
-One of the coolest things on Mage is that you can visually see how the elements of your pipeline interact with each other:
-
-<img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/15-consume-mage-kafka/image-9.png" alt="linearly separable data">
-
-Also, with simple drag and drop you change how the various blocks interact with each other.
-
-Anyway, now, we are ready to consume data. However, we are currently not producing any. We can simply start the Docker container that we created previously. So, let's see what is the container id of my Docker container:
+Now, we are ready to consume data. However, we are currently not producing any. To produce data, we can simply start the Docker container that we previously created. So, let's see what is the container id of my Docker container:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/15-consume-mage-kafka/image-7.png" alt="linearly separable data">
 
@@ -1440,7 +1440,7 @@ Now, go back on Mage and click on *Execute pipeline*:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/15-consume-mage-kafka/image-10.png" alt="linearly separable data">
 
-Soon enough, you should see that we're consuming messages from Kafka:
+Soon enough, you should see that you're consuming messages from Kafka:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/15-consume-mage-kafka/image-11.png" alt="linearly separable data">
 
@@ -1448,7 +1448,7 @@ Congrats! As a next step, we'll send the streamed data to BigQuery.
 
 ## Send Streamed Data to BigQuery
 
-Now, let's send the data that we're streaming to BigQuery. To do that, we first need to create a data set in BigQuery. In BigQuery, a data set is the equivalent of a database in other systems. So, type <span style="color: white; background-color: black;">big query</span> and click on *BigQuery*:
+Now, let's send the data that we're streaming to BigQuery. To do that, we first need to create a data set in BigQuery. In BigQuery, a data set is the equivalent of a database in other systems. So, go to Google Cloud, type <span style="color: white; background-color: black;">big query</span> and click on *BigQuery*:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/16-streamed-data-to-big-query/image-1.png" alt="linearly separable data">
 
@@ -1500,11 +1500,11 @@ Select *JSON* and click on *CREATE*:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/16-streamed-data-to-big-query/image-13.png" alt="linearly separable data">
 
-This will download the credentials of your service account that we'll use to make changes on BigQuery when in a non-interactive environement. To add the credentials to your VM, drag them to this area:
+This will download the credentials of your service account that we'll use to make changes on BigQuery when in a non-interactive environement. To add the credentials to your VM, drag them to this area of VS code:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/16-streamed-data-to-big-query/image-14.png" alt="linearly separable data">
 
-One of the worst mistakes you could make is to inadvertently publish your credentials on a GitHub repository. To prevent this, we can create a file named `.gitignore`. Any content listed in this file will be ignored by GitHub, ensuring it's not published in the current repository. Since our credentials are stored in `.json` format, to prevent them from being added to our GitHub repository, simply add the following line to your `.gitignore` file:
+One of the worst mistakes you could make is to inadvertently publish your credentials to a GitHub repository. To prevent this, we can create a file named `.gitignore`. Any content listed in this file will be ignored by GitHub, ensuring it's not published in the current repository. Since our credentials are stored in `.json` format, to prevent them from being added to our GitHub repository, simply add the following line to your `.gitignore` file:
 
 ```bash
 # Ignore files with .json extension
@@ -1547,7 +1547,7 @@ job = client.load_table_from_dataframe(
 )
 ```
 
-The following piece of code loads service account credentials from a JSON key file located at `/home/arbenkqiku/streaming-pipeline/streaming-pipeline-418713-7f7d915b1fc7.json`. These credentials are used to authenticate with Google Cloud services, specifically BigQuery.
+Let's analyze what this code snippet does. The first piece of code loads service account credentials from a JSON key file located at `/home/arbenkqiku/streaming-pipeline/streaming-pipeline-418713-7f7d915b1fc7.json`. These credentials are used to authenticate with Google Cloud services, in our case with BigQuery.
 
 ```python
 credentials = service_account.Credentials.from_service_account_file(
@@ -1562,7 +1562,7 @@ client = bigquery.Client(project=credentials.project_id, credentials=credentials
 job_config = bigquery.LoadJobConfig()
 ```
 
-This creates a DataFrame (df) containing a single example record (json_example) representing data to be loaded into BigQuery. This record includes fields like 'company_name', 'company_number', 'company_status', etc. It then converts date fields ('date_of_creation' and 'published_at') in the DataFrame to datetime objects using pd.to_datetime() to ensure compatibility with BigQuery's date format.
+The following code snippet creates a DataFrame (df) containing a single example record (json_example) representing data to be loaded into BigQuery. This record includes fields like 'company_name', 'company_number', 'company_status', etc. It then converts date fields ('date_of_creation' and 'published_at') in the DataFrame to datetime objects using pd.to_datetime() to ensure compatibility with BigQuery's date format.
 
 ```python
 json_example = {'company_name': 'CONSULTANCY, PROJECT AND INTERIM MANAGEMENT SERVICES LTD', 'company_number': '13255037', 'company_status': 'active', 'date_of_creation': '2021-03-09', 'postal_code': 'PE6 0RP', 'published_at': '2024-03-23T18:37:03'}
@@ -1579,7 +1579,7 @@ table_name = 'company_house_stream'
 table_id = '{0}.{1}.{2}'.format(credentials.project_id, "company_house", table_name)
 ```
 
-This configures the job to append the DataFrame data to the existing table if it already exists (job_config.write_disposition = bigquery.WriteDisposition.WRITE_APPEND).
+This configures the job to append the DataFrame data to the existing table if it already exists.
 
 ```python
 job_config.write_disposition = bigquery.WriteDisposition.WRITE_APPEND
@@ -1595,7 +1595,7 @@ job = client.load_table_from_dataframe(
 )
 ```
 
-If you now go on BigQuery, you should see a table named <span style="color: white; background-color: black;">company_house_stream</span>. If you click on *PREVIEW*, you should see the mock-up data that we sent.
+If you now go to BigQuery, you should see a table named <span style="color: white; background-color: black;">company_house_stream</span>. If you click on *PREVIEW*, you should see the mock-up data that we sent.
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/16-streamed-data-to-big-query/image-15.png" alt="linearly separable data">
 
@@ -1664,7 +1664,7 @@ def transform(messages: List[Dict], *args, **kwargs):
     return df
 ```
 
-Let's analyze this code. Here we iterate over each message in the messages list and append it to a new list called incoming_messages. This is essentially collecting all the incoming messages into a single list.
+Let's analyze this code. Here we iterate over each message in the messages list and append it to a new list called incoming_messages. This is essentially collecting all the incoming messages from Kafka into a single list.
 
 ```python
 # define container for incoming messages
@@ -1687,7 +1687,7 @@ This converts the list of dictionaries (incoming_messages) into a Pandas DataFra
     df = pd.DataFrame(incoming_messages)
 ```
 
-The rest of the code is basically the same as the previous script. The only thing that really changes is the location of our credentials:
+The rest of the code is basically the same as the previous script. The only thing that really changes is the location of our credentials, as we're now in Mage and not in the VM:
 
 ```python
 # define credentials
@@ -1696,7 +1696,7 @@ credentials = service_account.Credentials.from_service_account_file(
 )
 ```
 
-Since we're within Mage, the location needs to be in Mage. One of the cool features of Mage is that you can access its internal terminal, and see what files are available and what are the respective paths:
+One of the cool features of Mage is that you can access its internal terminal, and see what files are available and what are the respective paths:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/16-streamed-data-to-big-query/image-16.png" alt="linearly separable data">
 
@@ -1736,7 +1736,7 @@ Congrats! We just built a working streaming pipeline, that:
 
 ## Create Table that Contains all UK's Companies House Data
 
-For now, let's stop our Docker container that produces data for the Kafka topic and cancel our pipeline on Mage. Next, we need to create a BigQuery table containing all the available data from the UK's Companies House up to March 2024. I downloaded the data from [here](https://download.companieshouse.gov.uk/en_output.html) and cleaned it up. You can find the cleaned data [here](https://drive.google.com/drive/my-drive); please download it. In the next step, as we stream incoming data, we'll merge it with this table containg all the available data.
+For now, let's stop our Docker container that produces data for the Kafka topic and cancel our pipeline on Mage. Next, we need to create a BigQuery table containing all the available data from the UK's Companies House up to March 2024. I downloaded the data from [here](https://download.companieshouse.gov.uk/en_output.html) and cleaned it up. You can find the cleaned data [here](https://drive.google.com/file/d/1TRkDDKCnc3xkPeOtK8zTrW6fT5sG6pZe); please download it. In the next step, as we stream incoming data, we'll merge it with this table containg all the available data.
 
 Here is the script to send the overall table of UK's Companies House data to BigQuery. Given the size of the table, namely 437 MB, I was not able to run the script in my VM so I had to run it locally, which took almost 15 minutes. Anyway, this does not have any incidence on our project as in the end everything will run programmatically in the cloud.
 
@@ -1785,7 +1785,7 @@ The columns `date_of_creation` and `month_of_creation` should be of type `DATE`:
 # Apply Transformations with dbt (data build tool)
 
 ## How to Set-Up dbt
-dbt, also known as the Data Build Tool, is designed for data transformation tasks. It enables the creation of reusable modules, which are essentially blocks of SQL code that can be consistently applied across different scenarios. For example, you can ensure that a KPI is calculated in a standardized manner by utilizing the same dbt module across various contexts. Additionally, dbt introduces programming language features such as functions and variables into SQL workflows, expanding the capabilities beyond traditional SQL. Furthermore, dbt offers version control, a feature typically absent in SQL environments, allowing for better management and tracking of changes to data transformations.
+dbt, also known as Data Build Tool, is designed for data transformation tasks. It enables the creation of reusable modules, which are essentially reusable blocks of SQL code that can be consistently applied across different scenarios. For example, you can ensure that a KPI is calculated in a standardized manner by utilizing the same dbt module across various contexts. Additionally, dbt introduces programming language features such as functions and variables into SQL workflows, expanding the capabilities beyond traditional SQL. Furthermore, dbt offers version control, a feature typically absent in SQL environments, allowing for better management and tracking of changes to data transformations.
 
 In our case, we'll use dbt to create the following workflow:
 
@@ -1796,7 +1796,7 @@ In our case, we'll use dbt to create the following workflow:
 * (3) Subsequently, we utilize the snapshot to update the overall UK's Companies House data.
 * This process repeats as we capture another snapshot of the most recent streamed data, using the last timestamp from the previous snapshot.
 
-This process enables continuous updates to the UK's Companies House data as new data is streamed.
+This enables continuous updates to the UK's Companies House data as new data is streamed.
 
 Let's set up dbt. Go to [this link](https://www.getdbt.com/) and click on *Create a free account*:
 
@@ -1906,7 +1906,7 @@ In theory, now you could safely delete your development branch. However, in our 
 
 ## Create dbt Data Sources
 
-First of all, let's create a new folder for our staging models and data sources. We'll use this while we develop our models. Once we're satisfied, we can move them into production. Click on the three dots next to the `models` folder, and click on *Create folder*:
+First of all, let's create a new folder for our staging models and data sources. In fact, to create data models, you need data sources. Click on the three dots next to the `models` folder, and click on *Create folder*:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/18-dbt-data-sources/image-1.png" alt="linearly separable data">
 
@@ -1957,23 +1957,23 @@ This configuration allows dbt to locate and access the specified data in BigQuer
 
 ## Create dbt Models
 
-Now, let's build our first model. Here we have an issue of the chicken of and the egg. We need to create a snapshot of the most recent data, but we don't have any timestamp. So, let's create a timestamp first.
+Let's begin constructing our initial model. We encounter a classic "chicken and egg" scenario: we require a snapshot of the most recent data, yet we lack a timestamp. To address this, our first step is to generate a timestamp.
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/18-dbt-data-sources/image-8.png" alt="linearly separable data">
 
-In the `staging` folder, create a file named `get_last_timestamp.sql` and paste the following code. Unfortunately, for some reason my site was not able to parse jinja code, so, I'll simply paste here an image of the code. In any case, you can find the code in my [GitHub repo](https://github.com/ArbenKqiku/streaming-pipeline/tree/main/models/staging)
+In the `staging` folder, create a file named `get_last_timestamp.sql` and paste the following code. This code snippet is written in Jinja templating language. This is used by dbt for managing and transforming data in data warehouses.
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/22-repair/image-1.png" alt="linearly separable data">
 
-This code snippet is written in Jinja templating language. This is used by dbt for managing and transforming data in data warehouses.
+Unfortunately, for some reason my site was not able to parse jinja code, so, I'll simply paste here an image of the code. In any case, you can find the code in my [GitHub repo](https://github.com/ArbenKqiku/streaming-pipeline/tree/main/models/staging).
 
 Here's a breakdown of what each part of the code does:
 
-The config part is a Jinja directive used to configure settings for the dbt model. In this case, it sets the materialization method for the dbt model to 'table', indicating that the results of the SQL query will be stored in a table.
+The config part is a Jinja directive used to configure settings for the dbt model. In this case, it sets the materialization method for the dbt model to `table`, indicating that the results of the SQL query will be stored in a table.
 
 `select published_at from {{ source('staging', 'company_house_stream')}} order by published_at limit 1`: This is a SQL query written inside the Jinja template. It selects the `published_at` column from the `company_house_stream` table in the `staging` schema. The `{{ source(...) }}` syntax is a Jinja function call that dynamically generates the name of the table based on the provided arguments.
 
-In this query, we're selecting the 1st timestamp, as it is the 1st time that we are retrieving the streamed data. However, later we'll modify this query with:
+In this query, we're selecting the **first* timestamp because it represents the initial retrieval of streamed data. However, for subsequent iterations, we'll use the **last** timestamp from the previous snapshot.
 
 ```sql
 order by
