@@ -1362,7 +1362,7 @@ Give a name to your firewall rule, then select the following options and click o
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/14-install-mage/image-6.png" alt="linearly separable data">
 
-With this, we're basically allowing ingress traffic through port 6789, which is where Mage is located. Then, go back to your VM, copy your external IP address and type it followed by `:6789`. This is what it looks like in my case:
+With this, we're basically allowing ingress traffic through port `6789`, which is where Mage is located. Then, go back to your VM, copy your external IP address and type it followed by `:6789`. This is what it looks like in my case:
 
 ```bash
 34.65.113.154:6789
@@ -1374,7 +1374,7 @@ Now, you should be able to access Mage via the external IP address:
 
 ## Consume Data from Kafka Topic
 
-Let's create a new pipeline. At the top left, click on *New* and then on *Streaming*:
+In Mage, you can create either batch or streaming pipelines. In our case, we need to consume data in real-time from a Kafka topic, so we'll create a streaming pipeline. At the top left, click on *New* and then on *Streaming*:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/15-consume-mage-kafka/image-1.png" alt="linearly separable data">
 
@@ -1414,7 +1414,7 @@ sasl_config:
     password: /rmTFMqsvD4/CEs7tJEZAD6/NV9Oabcabcaabcabcaabcabcaabcabcaabcabca
 ```
 
-In a streaming pipeline using Kafka, it is not possible to consume data with a simple Data loader block, we also need to add a Transformer block. Click on *Transformer* > *Python* > *Generic (no template)*:
+In the `Data loader` block, we're simply consuming the data. However, if you run the pipeline with this block only, there is no output of the consumed data. To see the data, we also need to add a `Transformer block`. Click on *Transformer* > *Python* > *Generic (no template)*:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/15-consume-mage-kafka/image-5.png" alt="linearly separable data">
 
@@ -1423,6 +1423,10 @@ Give a name to your block and click on *Save and add*:
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/15-consume-mage-kafka/image-6.png" alt="linearly separable data">
 
 Now, we are ready to consume data. However, we are currently not producing any. To produce data, we can simply start the Docker container that we previously created. So, let's see what is the container id of my Docker container:
+
+```bash
+docker ps -a
+```
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/15-consume-mage-kafka/image-7.png" alt="linearly separable data">
 
@@ -1436,7 +1440,7 @@ Soon enough, on Confluent you should see that you are producing data:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/15-consume-mage-kafka/image-8.png" alt="linearly separable data">
 
-Now, go back on Mage and click on *Execute pipeline*:
+Now, go back to Mage and click on *Execute pipeline*:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/15-consume-mage-kafka/image-10.png" alt="linearly separable data">
 
@@ -1464,7 +1468,11 @@ Give a name to your dataset, select a region and click on *CREATE DATASET*:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/16-streamed-data-to-big-query/image-4.png" alt="linearly separable data">
 
-Now, let's create a service account. A service account is essentially an account authorized to make changes on your behalf. This is particularly useful in scenarios where browser authentication is not feasible, such as in a production environment. Type <span style="color: white; background-color: black;">service accounts</span> in the search bar and click on *Service Accounts*:
+In our case, we're sending data to BigQuery from Mage, which is a **production** environement. On the other hand, when you try to send data **manually** from your local machine, you can login to your Google account through the browser and grant permission to your script to perform tasks:
+
+<img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/22-project-intro/image-13.png" alt="linearly separable data">
+
+However, in a production environment, we don't have the luxury to go through the browser's authentication process, so we need to find another solution to prove to Google that we're actually authorized to perform tasks. To do that, we can create a service account. A service account is essentially an account authorized to make changes on your behalf. Go to the VM and type <span style="color: white; background-color: black;">service accounts</span> in the search bar and click on *Service Accounts*:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/16-streamed-data-to-big-query/image-5.png" alt="linearly separable data">
 
