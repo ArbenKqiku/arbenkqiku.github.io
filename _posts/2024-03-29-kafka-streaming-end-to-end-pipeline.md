@@ -18,7 +18,7 @@ mathjax: "true"
     - [Access VM Through Visual Studio Code (VS Code)](#access-vm-through-visual-studio-code-vs-code)
 - [Stream from UK's Companies House API and Produce to Kafka](#streaming)
     - [Create a GitHub Repository](#create-a-github-repository)
-    - [Stream data from UK’s Companies House](#stream-data-from-uks-company-house)
+    - [Stream data from UK’s Companies House](#stream-data-from-uks-companies-house)
     - [What's Kafka](#what-is-kafka)
     - [Create a Kafka Cluster](#create-a-kafka-cluster)
     - [Produce Simulated Data to a Kafka Topic](#produce-simulated-data-to-a-kafka-topic)
@@ -39,9 +39,9 @@ mathjax: "true"
     - [Schedule and Run the Entire Pipeline](#schedule-and-run-the-entire-pipeline)
 
 # Goal of the Project and Explanation
-For this project we'll use data from from [UK's Companies House](https://www.gov.uk/government/organisations/companies-house). The UK Companies House is an executive agency of the UK Government, responsible for incorporating and dissolving limited companies, registering company information, and making this information available to the public.
+This guide aims to achieve two goals: stream data in real-time from [UK's Companies House](https://www.gov.uk/government/organisations/companies-house) and integrate it with the entire dataset as new data becomes available over time.
 
-This guide aims to achieve two goals: stream data in real-time from UK's Companies House and integrate it with the entire dataset as new data becomes available over time.
+The UK Companies House is an executive agency of the UK Government, responsible for incorporating and dissolving limited companies, registering company information, and making this information available to the public.
 
 Here is a simplified architecture of the project:
 
@@ -537,7 +537,7 @@ response = requests.get(
 )
 ```
 
-First of all, we're importing the necessary packages. Then, we define the endpoint with the necessary headers, that we got from Postman. Even though my request is exactly the same as in Postman, for some reason it would not work. I later discovered that the issue is due to the <span style="color: white; background-color: black;">stream</span> argument. When accessing a streaming API, it is very important to specifiy this aspect. With code, our request is successful, however, it doesn't produce any output. We need to find a way to create an open connection, where results are streamed and displayed in real time.
+First of all, we're importing the necessary packages. Then, we define the endpoint with the necessary headers, that we got from Postman. Even though my request is exactly the same as in Postman, for some reason it would not work. I later discovered that the issue is due to the <span style="color: white; background-color: black;">stream</span> argument. When accessing a streaming API, it is very important to specifiy this aspect. With the previous code, our request is successful, however, it doesn't produce any output. We need to find a way to create an open connection, where results are streamed and displayed in real time.
 
 Let's add this piece of code:
 
@@ -554,7 +554,7 @@ for line in response.iter_lines():
         print(json_line)
 ```
 
-With this piece of code `for line in response.iter_lines():`, we iterate over each line of data received from the response object. iter_lines() is a method provided by the requests library to iterate over the response content line by line. With `if line:` we check for data. With `decoded_line = line.decode('utf-8')`, if there is data in the line, it is decoded from bytes to a string using UTF-8 encoding. The decode() method is used to decode byte sequences into strings. With `json_line = json.loads(decoded_line)`, once the line of data is decoded, it is assumed to be in JSON format, and the loads() method from the json module is used to parse the JSON data into a Python dictionary. Finally, it is printed. this is the final code:
+With this piece of code `for line in response.iter_lines():`, we iterate over each line of data received from the response object. `iter_lines()` is a method provided by the requests library to iterate over the response content line by line. With `if line:` we check for data. With `if line: decoded_line = line.decode('utf-8')`, if there is data in the line, it is decoded from bytes to a string using UTF-8 encoding. The `decode()` method is used to decode byte sequences into strings. With `json_line = json.loads(decoded_line)`, once the line of data is decoded, it is assumed to be in JSON format, and the `loads()` method from the json module is used to parse the JSON data into a Python dictionary. Finally, it is printed. this is the final code:
 
 ```python
 import requests
@@ -663,7 +663,7 @@ except Exception as e:
     print(f"an error occurred {e}")
 ```
 
-Firstly, it's essential to handle exceptions that may occur when connecting to the API. Additionally, while the API provides a lot of columns for each row, I'm only interested in retrieving specific fields. To facilitate this, I've initialized an empty JSON placeholder:
+Firstly, it's essential to handle exceptions that may occur when connecting to the API. Additionally, while the API provides a lot of columns for each row, we are only interested in retrieving specific fields. To facilitate this, I've initialized an empty JSON placeholder:
 
 ```python
 # Build an empty JSON placeholder
@@ -768,7 +768,7 @@ Click on *Topics*:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/8-kafka-cluster/image-9.png" alt="linearly separable data">
 
-Click on *Create new*:
+Click on *Create topic*:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/8-kafka-cluster/image-10.png" alt="linearly separable data">
 
@@ -796,7 +796,7 @@ We're all set, we can now start producing data to our Kafka topic!
 
 ## Produce Simulated Data to a Kafka Topic
 
-I have taken part the following guide from [Confluent's documentation](https://developer.confluent.io/get-started/python/#configuration). In the VM, copy and paste the following configuration data into a file named `getting_started.ini`, substituting the API key and secret that you just created for the `sasl.username` and `sasl.password` values, respectively.
+I have taken part the following guide from [Confluent's documentation](https://developer.confluent.io/get-started/python/#configuration). To produce data to our Kafka cluster, we need a configuration file. In the VM, copy and paste the following configuration data into a file named `getting_started.ini`, substituting the API key and secret that you just created for the `sasl.username` and `sasl.password` values, respectively.
 
 ```yaml
 [default]
@@ -912,7 +912,7 @@ config = dict(config_parser['default'])
 producer = Producer(config)
 ```
 
-Here, we define the topic where we'll produce the data. I named my topic <span style="color: white; background-color: black;">company_house</span>, so, I'll change the name from <span style="color: white; background-color: black;">purchases</span> to <span style="color: white; background-color: black;">company_house</span> in the `producer.py` file. `user_id` and `products` are simply fake data that we'll produce to our topic as an exercise. 
+Here, we define the topic where we'll produce the data. I named my topic <span style="color: white; background-color: black;">company_house</span>, so, I'll change the name from <span style="color: white; background-color: black;">purchases</span> to <span style="color: white; background-color: black;">company_house</span> in the `producer.py` file. `user_id` and `products` are simply fake data that we'll produce to our topic to test things out.
 
 ```python
 # Produce data by selecting random values from these lists.
@@ -1132,14 +1132,14 @@ RUN chmod +x producer_company_house.py
 CMD ["./producer_company_house.py", "getting_started.ini"]
 ```
 
-Here is what each line means. Here, we are basically taking an existing Docker image and building on top of it. It would be like buying the pre-made dough and then add your toppings to prepare your pizza.
+Here is what each line of code does. In the following snippet, we are basically taking an existing Docker image and building on top of it. It would be like buying the pre-made dough and then add your toppings to prepare your pizza.
 
 ```yaml
 # Use an official Python runtime as a parent image
 FROM python:3.10
 ```
 
-Here, we are setting the working directory in the container. It like running `cd` from the command-line.
+Here, we are setting the working directory in the container. It is like running `cd` from the command-line.
 
 ```yaml
 # Set the working directory in the container
@@ -1160,7 +1160,7 @@ Here, we install the necessary python packages.
 RUN pip install --no-cache-dir -r requirements_docker.txt
 ```
 
-Please, create a file named `requirements_docker.txt` and paste the following content. We are doing this because to produce data to our Kafka topic we don't need all the packages in the file `requirements.txt`.
+Please, create a file named `requirements_docker.txt` and paste the following content. We are doing this because to produce data to our Kafka topic we don't need all the packages contained in the file `requirements.txt`.
 
 ```
 configparser==6.0.1
@@ -1182,7 +1182,7 @@ Finally, we run the script `producer_company_house.py` with the config file `get
 CMD ["./producer_company_house.py", "getting_started.ini"]
 ```
 
-To create our Docker image from our Dockerfile, we first need to install docker. Let’s download a GitHub repo that contains the installation for Docker:
+To create our Docker image from our Dockerfile, we first need to install Docker. Let’s download a GitHub repo that contains the installation for Docker:
 
 ```bash
 git clone https://github.com/MichaelShoemaker/DockerComposeInstall.git
@@ -1216,9 +1216,9 @@ This should show the following message:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/11-create-containerized-app/image-2.png" alt="linearly separable data">
 
-Before proceeding, ,ake sure you saved all the files mentioned in the Dockerfile. If you made any modifications to a file without saving it, the modifications will not be included in the Dockerfile. 
+Before proceeding, make sure you saved all the files mentioned in the Dockerfile. If you made any modifications to a file without saving it, the modifications will not be included in the Dockerfile. 
 
-Now, go back to the folder that contains your Dockerfile and type the following. This basically instructs the system to build a docker image called <span style="color: white; background-color: black;">kafka producer</span> from our Dockerfile. The dot indicates the Dockerfile.
+Now, go back to the folder that contains your Dockerfile and type the following. This basically instructs the system to build a docker image called <span style="color: white; background-color: black;">kafka producer</span> from our Dockerfile. The dot at then end indicates the Dockerfile.
 
 ```bash
 docker build -t kafka-producer .
@@ -1248,7 +1248,7 @@ If you go under messages, you should see new incoming messages:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/11-create-containerized-app/image-6.png" alt="linearly separable data">
 
-Here a couple of nifty tricks related to Docker. To see the Docker containers that are currently running, type:
+Here are a couple of nifty tricks related to Docker. To see the Docker containers that are currently running, type:
 
 ```bash
 docker ps
@@ -1276,7 +1276,7 @@ For example:
 docker stop a2cd18c97c49
 ```
 
-To see restart a Docker container, you don't need to type `docker run image_name` again. Once the Docker container has been created, you can simply restart it:
+To see restart a Docker container, you don't need to type `docker run image_name` again, otherwise you would be running a new instance of the Docker image. Once the Docker container has been created, you can simply restart it:
 
 ```bash
 docker start container_id
@@ -1296,7 +1296,7 @@ docker images
 
 Now that we know that we can produce data to Kafka, you can stop your Docker container.
 
-So far, we've developed a Kafka producer that streams data from the UK's Companies House API to a Kafka topic. This functionality is packaged into a Docker image, from which we've launched a Docker container. I would say that this is quite an achievement, congrats!
+So far, we've developed a Kafka producer that streams data from the UK's Companies House API to a Kafka topic. Everything is nicely packaged into a Docker image, from which we've launched a Docker container. I would say that this is quite an achievement, congrats!
 
 Up until now, we produced data to a Kafka topic. Right now, we need to consume this data!
 
@@ -1306,7 +1306,7 @@ A data orchestrator allows to build ETL (extract, transform and load) data pipel
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/22-project-intro/image-12.png" alt="linearly separable data">
 
-Also, with simple drag and drop you change how the various blocks interact with each other.
+Also, with simple drag and drop you can change how the various blocks interact with each other.
 
 [Here](https://github.com/mage-ai/mage-zoomcamp) is the repo for the installation guide, but we'll go through the installation here as well.
 
@@ -1324,7 +1324,11 @@ cd mage-zoomcamp
 
 Rename `dev.env` to simply `.env` — this will ensure the file is not committed to Git by accident, since it will contain credentials in the future.
 
-Now, let's build the container:
+Now, let's build the container with Docker compose. When we use Docker Compose to build containers, we're essentially creating applications made up of multiple containers that can communicate with each other. This is particularly handy for complex applications where different parts of the system need to work together.
+
+In contrast, the usual process of building Docker images involves focusing on creating one container at a time. Each Dockerfile represents a single container, and while these containers can interact, managing their communication and dependencies can become more complex as the application grows.
+
+With Docker Compose, all the details about the containers, such as Docker images, environment variables, and dependencies, are stored in a YAML file. This file acts as a configuration blueprint for our application. For example, in our scenario, we have a YAML file that specifies both a Docker image to install Mage and a PostgreSQL database. Even if we only need Mage for our task, we can still use this YAML file to set up our environment.
 
 ```bash
 docker compose build
@@ -1336,7 +1340,7 @@ Finally, start the Docker container:
 docker compose up
 ```
 
-Then, go to ports in your VM, and click on the browser icon next to port `6789`:
+In the YAML file, we have defined Mage's port as `6789`. In fact, you can access Mage by going to your VM and clicking on the browser icon next to port `6789`:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/14-install-mage/image-1.png" alt="linearly separable data">
 
@@ -1362,13 +1366,13 @@ Give a name to your firewall rule, then select the following options and click o
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/14-install-mage/image-6.png" alt="linearly separable data">
 
-With this, we're basically allowing ingress traffic through port `6789`, which is where Mage is located. Then, go back to your VM, copy your external IP address and type it followed by `:6789`. This is what it looks like in my case:
+With this, we're basically allowing ingress traffic through port `6789`, which is where Mage is located. Now, go back to your VM, copy your external IP address and type it followed by `:6789`. This is what it looks like in my case:
 
 ```bash
 34.65.113.154:6789
 ```
 
-Now, you should be able to access Mage via the external IP address:
+Now, if you type this address in your browser you should be able to access Mage via the external IP address:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/14-install-mage/image-7.png" alt="linearly separable data">
 
@@ -1382,7 +1386,7 @@ Give a name to your streaming pipeline and click on *Create*:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/15-consume-mage-kafka/image-2.png" alt="linearly separable data">
 
-In Mage, a pipeline is composed of blocks. The different blocks are `Data loader`, `Transformer` and `Data exporter`. Your pipeline can have as many blocks as you want. As we need to consume the data from the Kafka topic, click on *Data loader* and select *Kafka*:
+In Mage, a pipeline is composed of blocks. The different blocks are `Data loader`, `Transformer` and `Data exporter`. Your pipeline can have as many blocks as you want. As we need to consume the data from a Kafka topic, click on *Data loader* and select *Kafka*:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/15-consume-mage-kafka/image-3.png" alt="linearly separable data">
 
@@ -1390,7 +1394,7 @@ Give a name to your block and click on *Save and add*:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/15-consume-mage-kafka/image-4.png" alt="linearly separable data">
 
-Similar to what we did in the file `getting_started.ini`, we need to define the configuration with the:
+Similar to what we did in the file `getting_started.ini`, we need to define the configuration with the following parameters:
 * bootstrap server
 * topic
 * username
@@ -1414,7 +1418,7 @@ sasl_config:
     password: /rmTFMqsvD4/CEs7tJEZAD6/NV9Oabcabcaabcabcaabcabcaabcabcaabcabca
 ```
 
-In the `Data loader` block, we're simply consuming the data. However, if you run the pipeline with this block only, there is no output of the consumed data. To see the data, we also need to add a `Transformer block`. Click on *Transformer* > *Python* > *Generic (no template)*:
+In the `Data loader` block, we're consuming the data. However, if you run the pipeline with this block only, there is no output of the consumed data. To see the data, we also need to add a `Transformer block`. Click on *Transformer* > *Python* > *Generic (no template)*:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/15-consume-mage-kafka/image-5.png" alt="linearly separable data">
 
@@ -1422,7 +1426,7 @@ Give a name to your block and click on *Save and add*:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/15-consume-mage-kafka/image-6.png" alt="linearly separable data">
 
-Now, we are ready to consume data. However, we are currently not producing any. To produce data, we can simply start the Docker container that we previously created. So, let's see what is the container id of my Docker container:
+Now, we are ready to consume data. However, we are currently not producing any. To produce data, we can simply start the Docker container that we previously created. So, let's see what is the container id of our Docker container:
 
 ```bash
 docker ps -a
@@ -1430,13 +1434,13 @@ docker ps -a
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/15-consume-mage-kafka/image-7.png" alt="linearly separable data">
 
-Therefore, I'll type:
+Therefore, we'll type:
 
 ```bash
 docker start 3d7a82c606d4
 ```
 
-Soon enough, on Confluent you should see that you are producing data:
+Soon enough, on Confluent we should see that we are producing data:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/15-consume-mage-kafka/image-8.png" alt="linearly separable data">
 
@@ -1444,7 +1448,7 @@ Now, go back to Mage and click on *Execute pipeline*:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/15-consume-mage-kafka/image-10.png" alt="linearly separable data">
 
-Soon enough, you should see that you're consuming messages from Kafka:
+Soon enough, you should see that we're consuming messages from Kafka:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/15-consume-mage-kafka/image-11.png" alt="linearly separable data">
 
@@ -1468,7 +1472,7 @@ Give a name to your dataset, select a region and click on *CREATE DATASET*:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/16-streamed-data-to-big-query/image-4.png" alt="linearly separable data">
 
-In our case, we're sending data to BigQuery from Mage, which is a **production** environement. On the other hand, when you try to send data **manually** from your local machine, you can login to your Google account through the browser and grant permission to your script to perform tasks:
+In our case, we're sending data to BigQuery from Mage, which is a **production** environement. On the other hand, when you try to send data **manually** from your local machine, you can login to your Google account through the browser and grant permission to your script to perform tasks. This image provides an example of a manual authentication through the browser to grant access to the `Tidyverse API Packages` to make changes on BigQuery:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/22-project-intro/image-13.png" alt="linearly separable data">
 
@@ -1508,7 +1512,7 @@ Select *JSON* and click on *CREATE*:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/16-streamed-data-to-big-query/image-13.png" alt="linearly separable data">
 
-This will download the credentials of your service account that we'll use to make changes on BigQuery when in a non-interactive environement. To add the credentials to your VM, drag them to this area of VS code:
+This will download the credentials of the service account that we'll use to make changes on BigQuery when in a non-interactive environement. To add the credentials to the VM, drag them to this area of VS code:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/16-streamed-data-to-big-query/image-14.png" alt="linearly separable data">
 
@@ -1563,14 +1567,14 @@ credentials = service_account.Credentials.from_service_account_file(
 )
 ```
 
-The next code snippet initializes a BigQuery client using the obtained credentials and specifies the project ID associated with those credentials and creates a BigQuery load job configuration (job_config):
+The next code snippet initializes a BigQuery client using the obtained credentials and specifies the project ID associated with those credentials and creates a BigQuery load job configuration (`job_config`):
 
 ```python
 client = bigquery.Client(project=credentials.project_id, credentials=credentials)
 job_config = bigquery.LoadJobConfig()
 ```
 
-The following code snippet creates a DataFrame (df) containing a single example record (json_example) representing data to be loaded into BigQuery. This record includes fields like 'company_name', 'company_number', 'company_status', etc. It then converts date fields ('date_of_creation' and 'published_at') in the DataFrame to datetime objects using pd.to_datetime() to ensure compatibility with BigQuery's date format.
+The following code snippet creates a DataFrame `df` containing a single example record `json_example` representing data to be loaded into BigQuery. This record includes fields like 'company_name', 'company_number', 'company_status', etc. It then converts date fields ('date_of_creation' and 'published_at') in the DataFrame to datetime objects using `pd.to_datetime()` to ensure compatibility with BigQuery's date format.
 
 ```python
 json_example = {'company_name': 'CONSULTANCY, PROJECT AND INTERIM MANAGEMENT SERVICES LTD', 'company_number': '13255037', 'company_status': 'active', 'date_of_creation': '2021-03-09', 'postal_code': 'PE6 0RP', 'published_at': '2024-03-23T18:37:03'}
@@ -1580,7 +1584,7 @@ df['date_of_creation'] = pd.to_datetime(df['date_of_creation'])
 df['published_at'] = pd.to_datetime(df['published_at'])
 ```
 
-Here we define the destination table ID (table_id) where the DataFrame data will be loaded. This table is located in the `company_house` dataset within the specified project.
+Here we define the destination `table_id` where the DataFrame data will be loaded. This table is located in the `company_house` dataset within the specified project.
 
 ```python
 table_name = 'company_house_stream'
@@ -1593,7 +1597,7 @@ This configures the job to append the DataFrame data to the existing table if it
 job_config.write_disposition = bigquery.WriteDisposition.WRITE_APPEND
 ```
 
-Finally, this initiates a BigQuery load job (job) to upload the DataFrame data to the specified table.
+Finally, this initiates a BigQuery load job `job` to upload the DataFrame data to the specified table.
 
 ```python
 # Upload new set incrementally:
@@ -1672,7 +1676,7 @@ def transform(messages: List[Dict], *args, **kwargs):
     return df
 ```
 
-Let's analyze this code. Here we iterate over each message in the messages list and append it to a new list called incoming_messages. This is essentially collecting all the incoming messages from Kafka into a single list.
+Let's analyze this code. Here we iterate over each message in the messages list and append it to a new list called `incoming_messages`. This is essentially collecting all the incoming messages from Kafka into a single list.
 
 ```python
 # define container for incoming messages
@@ -1688,7 +1692,7 @@ for msg in messages:
     incoming_messages.append(msg)
 ```
 
-This converts the list of dictionaries (incoming_messages) into a Pandas DataFrame (df).
+This converts the list of dictionaries `incoming_messages` into a Pandas DataFrame `df`.
 
 ```python
     # turn into a pandas data frame
@@ -1708,7 +1712,7 @@ One of the cool features of Mage is that you can access its internal terminal, a
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/16-streamed-data-to-big-query/image-16.png" alt="linearly separable data">
 
-First of all, as you can see the default path in Mage starts with `/home/src`. However, when I type `ls` the credentials are nowhere to be seen:
+First of all, as you can see the default path in Mage starts with `/home/src`. However, when we type `ls` the credentials are nowhere to be seen:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/16-streamed-data-to-big-query/image-17.png" alt="linearly separable data">
 
@@ -1744,7 +1748,7 @@ Congrats! We just built a working streaming pipeline, that:
 
 ## Create Table that Contains all UK's Companies House Data
 
-For now, let's stop our Docker container that produces data for the Kafka topic and cancel our pipeline on Mage. Next, we need to create a BigQuery table containing all the available data from the UK's Companies House up to March 2024. I downloaded the data from [here](https://download.companieshouse.gov.uk/en_output.html) and cleaned it up. You can find the cleaned data [here](https://drive.google.com/file/d/1TRkDDKCnc3xkPeOtK8zTrW6fT5sG6pZe); please download it. In the next step, as we stream incoming data, we'll merge it with this table containg all the available data.
+For now, let's stop our Docker container that produces data to the Kafka topic and cancel our pipeline on Mage. Next, we need to create a BigQuery table containing all the available data from the UK's Companies House up to March 2024. I downloaded the data from [here](https://download.companieshouse.gov.uk/en_output.html) and cleaned it up. You can find the cleaned data [here](https://drive.google.com/file/d/1TRkDDKCnc3xkPeOtK8zTrW6fT5sG6pZe); please download it. In the next step, as we stream incoming data, we'll merge it with this table containg all the available data.
 
 Here is the script to send the overall table of UK's Companies House data to BigQuery. Given the size of the table, namely 437 MB, I was not able to run the script in my VM so I had to run it locally, which took almost 15 minutes. Anyway, this does not have any incidence on our project as in the end everything will run programmatically in the cloud.
 
@@ -1786,7 +1790,7 @@ df = pd.read_csv("company_house_core_clean.csv")
 table_name = 'company_house_core'
 ```
 
-The columns `date_of_creation` and `month_of_creation` should be of type `DATE`:
+Please makre sure that the columns `date_of_creation` and `month_of_creation` are of type `DATE`:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/16-streamed-data-to-big-query/image-24.png" alt="linearly separable data">
 
@@ -1806,7 +1810,12 @@ In our case, we'll use dbt to create the following workflow:
 
 This enables continuous updates to the UK's Companies House data as new data is streamed.
 
-Let's set up dbt. Go to [this link](https://www.getdbt.com/) and click on *Create a free account*:
+Let's set up dbt. To start, we'll focus on two key tasks:
+
+* Linking GitHub Repository with dbt for Versioning: this involves connecting your GitHub repository with dbt to enable version control.
+* Linking BigQuery with dbt for Data Retrieval and Pushing: this step entails establishing a connection between BigQuery and dbt, allowing you to retrieve data from BigQuery and push transformed data back into BigQuery.
+
+Go to [this link](https://www.getdbt.com/) and click on *Create a free account*:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/17-dbt-installation/image-2.png" alt="linearly separable data">
 
@@ -1890,7 +1899,7 @@ On the left side, click on *Initialize dbt project*:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/17-dbt-installation/image-21.png" alt="linearly separable data">
 
-As you can see, some files, which represent the basic structure of dbt project, were created. Click on *Commit and sync* to push the changes to the GitHub repository:
+As you can see, some files, which represent the basic structure of a dbt project, were created. Click on *Commit and sync* to push the changes to the GitHub repository:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/17-dbt-installation/image-22.png" alt="linearly separable data">
 
@@ -1979,9 +1988,9 @@ Here's a breakdown of what each part of the code does:
 
 The config part is a Jinja directive used to configure settings for the dbt model. In this case, it sets the materialization method for the dbt model to `table`, indicating that the results of the SQL query will be stored in a table.
 
-`select published_at from {{ source('staging', 'company_house_stream')}} order by published_at limit 1`: This is a SQL query written inside the Jinja template. It selects the `published_at` column from the `company_house_stream` table in the `staging` schema. The `{{ source(...) }}` syntax is a Jinja function call that dynamically generates the name of the table based on the provided arguments.
+`select published_at from {{ source('staging', 'company_house_stream')}} order by published_at limit 1`: This is a SQL query written inside the Jinja template. It selects the `published_at` column from the `company_house_stream` table in the `staging` schema. The "{{ source(...) }}" syntax is a Jinja function call that dynamically generates the name of the table based on the provided arguments.
 
-In this query, we're selecting the **first* timestamp because it represents the initial retrieval of streamed data. However, for subsequent iterations, we'll use the **last** timestamp from the previous snapshot.
+In this query, we're selecting the **first** timestamp because it represents the initial retrieval of streamed data. However, for subsequent iterations, we'll use the **last** timestamp from the previous snapshot, as we want the most recent timestamp. 
 
 ```sql
 order by
@@ -1990,7 +1999,7 @@ limit
     1
 ```
 
-As we want the most recent timestamp. Once you have created your model, click on *Save* at the top right:
+Once you have created your model, click on *Save* at the top right:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/18-dbt-data-sources/image-9.png" alt="linearly separable data">
 
@@ -2165,7 +2174,7 @@ Then, go back to that job and click on *Run now* at the top right:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/20-dbt-production/image-4.png" alt="linearly separable data">
 
-Below, at the run history, you can see the current. Click on it:
+Below, at the run history, you can see the current run. Click on it:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/20-dbt-production/image-5.png" alt="linearly separable data">
 
@@ -2173,7 +2182,7 @@ If everything worked correctly, all the steps should be green:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/20-dbt-production/image-6.png" alt="linearly separable data">
 
-Also, in BigQuery you should see a new dataset named `prod` with the same tables as previously:
+Also, in BigQuery you should see a new dataset named `prod` with the `company_house_core` table:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/20-dbt-production/image-7.png" alt="linearly separable data">
 
@@ -2218,7 +2227,7 @@ Here is what the job <span style="color: white; background-color: black;">Get la
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/20-dbt-production/image-9.png" alt="linearly separable data">
 
-Now, as before, go to the terminal and start the Docker container that produces data to the Kafka topic. When you see production data in the Confluent console, start the Mage streaming pipeline as well. After a couple of minutes, stop these 2 process as we have generated enough new data to test things in our dbt development environment.
+Now, as before, go to the terminal and start the Docker container that produces data to the Kafka topic. When you see production data in the Confluent console, start the Mage streaming pipeline as well. After a couple of minutes, stop these 2 process as we have generated enough new data to test things in our dbt production environment.
 
 Now, let's run our jobs in the following order:
 * <span style="color: white; background-color: black;">Snapshot streamed data</span> 
@@ -2233,7 +2242,7 @@ There should be a new snapshot of data:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/20-dbt-production/image-11.png" alt="linearly separable data">
 
-Now, select the job * <span style="color: white; background-color: black;">Core Prod</span>. Click on *Run now*:
+Now, select the job <span style="color: white; background-color: black;">Core Prod</span>. Click on *Run now*:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/20-dbt-production/image-12.png" alt="linearly separable data">
 
@@ -2298,7 +2307,7 @@ Add the following cron schedule:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-4-kafka-streaming/21-schedule/image-5.png" alt="linearly separable data">
 
-Save the job. On dbt, the maximum frequency for a job is every 10 minutes. Therefore, to test whether everything runs smoothly, we have to patient.
+Save the job. On dbt, the maximum frequency for a job is every 10 minutes. Therefore, to test whether everything runs smoothly, we have to be patient.
 
 Now, as before, go to the terminal and start the Docker container that produces data to the Kafka topic. When you see production data in the Confluent console, go to Mage and click on *Triggers*:
 
