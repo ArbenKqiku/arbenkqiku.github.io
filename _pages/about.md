@@ -5,42 +5,25 @@ header:
   image: "/images/pascal-debrunner-UTbcrtjp18g-unsplash-copy-2.jpg"
 ---
 
-I am a digital marketer, data scientist and polyglot.
+I started my career as a digital marketer, but gradually I gravitated more towards the world of data. Currently, I work as a digital analyst, which is great as I can use my domain knowledge as a digital marketer as well as sharpen my data skills. Here are the tools that I use most for my day to day job:
 
-I help clients achieve their goals through digital marketing. Here is what I do:
+* Data collection: Google Tag Manager, GA4, BigQuery, Javascript
+* Data orchestration: Docker, Mage, dbt, GCP
+* Data cleaning: R, SQL, Python
+* Data analysis: R, SQL, Python, Excel
+* Data vizualization: ggplot2, Looker Studio
 
-* Develop custom digital marketing strategies (Which channels? Which messages? Which ad formats? Which tactics? Which audiences?)
-* Implement digital marketing campaigns by using various channels (SEA, Display, Shopping, YouTube, Facebook, Instagram, LinkedIn), in 4 languages (English, German, French & Italian) and by using several ad formats (dynamic ads, lead ads, collections, videos, etc.).
-* Optimize campaigns and provide feedback through interactive dashboards and custom reports.
+Thw world of data is very complex, and I occasionally write guides as I learn along. I have had the honor of being featured on Simo Ahava's blog two times:
 
-I also regularly use data science to:
+* [Join Google Ads and GA4 data in BigQuery](https://www.simoahava.com/analytics/join-ga4-google-ads-data-in-google-bigquery/)
+* [Content Analysis with GA4, BigQuery, R, Sheets, and Looker Studio](https://www.simoahava.com/analytics/content-analysis-using-ga4-bigquery-r-google-sheets-data-studio/)
 
-* Answer complex business questions (who are our digital business personas? What is the influence of the weather on our sales?)
-* Automate repetitive tasks that save a lot of time
-* Develop tools that improve the bottom line of our clients (ex.: bid manager that adjusts bids depending on weather conditions).
+I used to work for a digital marketing agency called [comtogether](https://www.comtogether.com/), and I have written several articles while I was there. Here are some of them:
+* [Building a data-driven channel attribution model using Markov chains](https://www.comtogether.com/2020/07/13/building-a-data-driven-channel-attribution-model-using-markov-chains/)
+* [Optimise and detox your YouTube Ad campaigns using n-gram analysis](https://www.comtogether.com/2021/02/17/optimise-and-detox-your-youtube-ad-campaigns-using-n-gram-analysis/)
+* [How to triple your return on ad spend using predictive modelling](https://www.comtogether.com/2022/02/15/how-to-triple-your-return-on-ad-spend-using-predictive-modelling/)
 
-*Here is a list of the technologies that I use:*
+The other articles that I have written can be found on my website. I also share some of my work on [LinkedIn](https://www.linkedin.com/in/arben-kqiku-301457117/). If you work in a related field or enjoy my work, don't hesitate to connect!
 
-* R
-* Javascript
-* BigQuery
-* Google Cloud
-* Google Data Studio
-
-*Here is a list of the APIs that I use:*
-
-* Google Ads API
-* Google Sheets API
-* Google Maps API
-* Google Analytics API
-* Facebook Ads API
-
-*Favorite R packages:*
-
-* googlesheets
-* RAdwords
-* bigrquery
-* stringi
-* dplyr
-* tidyr
-* caret
+Happy coding and happy learning :)
+Arben
