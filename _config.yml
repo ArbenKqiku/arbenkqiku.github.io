@@ -12,7 +12,7 @@ locale                   : "en-US"
 title                    : "Arben Kqiku"
 title_separator          : "-"
 name                     : "Arben Kqiku"
-description              : "Data Science Portfolio"
+description              : "Data Analytics & Engineering Blog"
 url                      : # the base hostname & protocol for your site e.g. "https://mmistakes.github.io"
 baseurl                  : # the subpath of your site, e.g. "/blog"
 repository               : # GitHub username/repo-name e.g. "mmistakes/minimal-mistakes"
@@ -85,7 +85,7 @@ analytics:
 author:
   name             : "Arben Kqiku"
   avatar           : "/images/bio-pic-3.jpg" # path of avatar image, e.g. "/assets/images/bio-photo.jpg"
-  bio              : "Data Science Portfolio"
+  bio              : "Data Analytics & Engineering Blog"
   location         : "Geneva, Switzerland"
   email            :
   uri              :

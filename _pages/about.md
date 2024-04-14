@@ -26,4 +26,5 @@ I used to work for a digital marketing agency called [comtogether](https://www.c
 The other articles that I have written can be found on my website. I also share some of my work on [LinkedIn](https://www.linkedin.com/in/arben-kqiku-301457117/). If you work in a related field or enjoy my work, don't hesitate to connect!
 
 Happy coding and happy learning :)
+
 Arben
