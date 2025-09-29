@@ -1,0 +1,10 @@
+---
+title: ""
+date: 2024-03-29
+tags: [kafka, docker, data engineering, confluent, mage, bigquery, dbt]
+permalink: "create-end-to-end-kafka-streaming-pipeline"
+header:
+  image: "images/article-4-kafka-streaming/21-schedule/project-diagram.png"
+excerpt: "Create an End to End Streaming Pipeline with Kafka, Docker, Mage, BigQuery and dbt"
+mathjax: "true"
+---
