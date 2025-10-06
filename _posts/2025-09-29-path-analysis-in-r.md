@@ -145,5 +145,23 @@ What’s happening in the code:
 - `*` means “zero or more times”, so together `.*` means “any sequence of characters.”
 - `\\.` escapes the dot, so it is treated as a literal period rather than the regex wildcard for “any character.”
 
-The result keeps only what comes after .com, which represents the relative page path (e.g., "/home" instead of "https://shop.googlemerchandisestore.com/home").
+The result keeps only what comes after .com, which represents the relative page path (e.g., "/home" instead of "https://shop.googlemerchandisestore.com/home"). Here is what the result looks like:
 
+<img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-1.4.png" alt="linearly separable data">
+
+Since we’re working with a large dataset, processing can take some time. To test our code more efficiently, we can apply it to only the first 100,000 rows. Once we’re sure everything works as expected, we can then run it on the full dataset. We can use the `slice()` function to select a specific range of rows:
+
+```R
+raw_data %>% 
+  
+  slice(1:100000) %>% 
+  
+  mutate(page_location = page_location %>% str_remove_all(".*\\.com"))
+```
+
+This returns the first 100,000 rows:
+
+<img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-1.5.png" alt="linearly separable data">
+
+The `%>%` symbol, known as the pipe operator, lets us chain multiple operations together.
+It passes the result of one step directly into the next one, so we can apply a new operation to the previous result without creating intermediate variables. In our code, we first select the first 100,000 rows, and then we remove everything before the `.com` in the page_location column.
