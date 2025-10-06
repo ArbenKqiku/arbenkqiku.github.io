@@ -122,3 +122,28 @@ bq_table() builds a reference to the table using the three IDs.
 bq_table_download() actually retrieves the table’s data from BigQuery into R as a dataframe (tibble).
 
 The bigint = "integer64" argument ensures large integers (like timestamps or user IDs) are preserved correctly instead of being truncated.
+
+As you can see, our dataset has over 2M+ rows:
+
+<img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-1.2.png" alt="linearly separable data">
+
+We are only interested in how users navigate between pages, not the full URLs. So we can remove the main domain (for example, "https://shop.googlemerchandisestore.com") and keep only the path, such as "/home" or "/products".
+
+```R
+raw_data %>% 
+  
+  mutate(page_location = page_location %>% str_remove_all(".*\\.com"))
+```
+
+What’s happening in the code:
+
+`mutate()` creates or modifies a column inside the dataset. Here, it updates the existing page_location column.
+
+`str_remove_all(".*\\.com")` uses a regular expression (regex) to remove everything before and including .com.
+
+- `.` matches any character.
+- `*` means “zero or more times”, so together `.*` means “any sequence of characters.”
+- `\\.` escapes the dot, so it is treated as a literal period rather than the regex wildcard for “any character.”
+
+The result keeps only what comes after .com, which represents the relative page path (e.g., "/home" instead of "https://shop.googlemerchandisestore.com/home").
+
