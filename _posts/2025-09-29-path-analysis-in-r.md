@@ -165,3 +165,96 @@ This returns the first 100,000 rows:
 
 The `%>%` symbol, known as the pipe operator, lets us chain multiple operations together.
 It passes the result of one step directly into the next one, so we can apply a new operation to the previous result without creating intermediate variables. In our code, we first select the first 100,000 rows, and then we remove everything before the `.com` in the page_location column.
+
+Next, let's create a `unique_session_id` column, which is the concatenation of the `user_pseudo_id` and `session_id` columns:
+
+```R
+raw_data %>% 
+  
+  slice(1:100000) %>% 
+  
+  mutate(page_location = page_location %>% str_remove_all(".*\\.com")) %>% 
+  
+  mutate(unique_session_id = str_c(user_pseudo_id, session_id))
+```
+
+Now we have a new column:
+
+<img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-1.6.png" alt="linearly separable data">
+
+With the `select()` function, you can choose which columns to keep or remove from your dataset. In our case, we’ll remove the columns `user_pseudo_id` and `session_id`, since they’re no longer needed for the next steps of our analysis.
+
+```R
+raw_data %>% 
+  
+  slice(1:100000) %>% 
+  
+  mutate(page_location = page_location %>% str_remove_all(".*\\.com")) %>% 
+  
+  mutate(unique_session_id = str_c(user_pseudo_id, session_id)) %>% 
+  
+  select(-user_pseudo_id, -session_id)
+```
+
+Here is the result:
+
+<img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-1.7.png" alt="linearly separable data">
+
+Actually, let's reorder the columns, let's have the `unique_session_id` first:
+
+```R
+raw_data %>% 
+  
+  slice(1:100000) %>% 
+  
+  mutate(page_location = page_location %>% str_remove_all(".*\\.com")) %>% 
+  
+  mutate(unique_session_id = str_c(user_pseudo_id, session_id)) %>% 
+  
+  select(-user_pseudo_id, -session_id) %>% 
+  
+  select(unique_session_id, event_name, page_location)
+```
+
+Here is the result:
+
+<img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-1.8.png" alt="linearly separable data">
+
+Our goal is to understand which pages users visited and what actions they performed on those pages. To do this, we’ll create a new column that combines both page views and other user events. If the event is `page_view`, we’ll keep the page URL (page_location) as the value. If the event is something else, like `view_promotion` or `add_to_cart`, we’ll use the event name instead.
+
+```R
+raw_data %>% 
+  
+  slice(1:100000) %>% 
+  
+  mutate(page_location = page_location %>% str_remove_all(".*\\.com")) %>% 
+  
+  mutate(unique_session_id = str_c(user_pseudo_id, session_id)) %>% 
+  
+  select(-user_pseudo_id, -session_id) %>% 
+  
+  select(unique_session_id, event_name, page_location) %>% 
+  
+  mutate(navigation = case_when(
+    event_name == "page_view" ~ page_location,
+    TRUE ~ event_name
+  ))
+```
+
+Here is what's happening in the code:
+
+`mutate(navigation = case_when(...))` creates a new column called navigation.
+
+The `case_when()` function works like an “if–else” statement:
+
+When `event_name` is `page_view`, it sets navigation equal to the `page_location`.
+
+For all other events (TRUE ~ `event_name`), it sets navigation equal to the name of the event (e.g., `view_promotion`, `add_to_cart`, etc.).
+
+The result is a single column that captures both where the user was and what they did there. This navigation column will be key for building the user journey in the next steps, since it merges page views and user actions into a single chronological sequence.
+
+Here is the result:
+
+<img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-1.9.png" alt="linearly separable data">
+
+
