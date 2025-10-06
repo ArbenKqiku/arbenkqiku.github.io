@@ -55,3 +55,70 @@ order by
   -- Order events by user, session, and timestamp to reconstruct paths
   user_pseudo_id, session_id, event_timestamp
 ```
+
+Here is the result:
+
+<img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-1.1.png" alt="linearly separable data">
+
+Let's save the result as a BigQuery table.
+
+Now, let's download the entire table in R:
+
+```R
+# Load libraries
+library(tidyverse)
+library(bigrquery)
+
+# 1 Auth ----
+bq_auth(path = "service-account.json")
+
+# 2 Retrieve data ----
+project_id <- "de-simmer-course-2"
+dataset_id <- "articles"
+table_id <- "2025_09_29_article_path_analysis_query"
+
+  # download table
+bq_table_info <- bq_table(project_id, dataset_id, table_id)
+raw_data <- bq_table_download(bq_table_info, bigint = "integer64")
+```
+
+Here is what is happening:
+
+```R
+# Load libraries
+library(tidyverse)
+library(bigrquery)
+```
+
+tidyverse provides tools for data wrangling and visualization.
+bigrquery lets you connect to and query Google BigQuery directly from R.
+
+```R
+# Authenticate to BigQuery
+bq_auth(path = "service-account.json")
+```
+This line authenticates your R session with Google Cloud using a service account (service-account.json). It’s what allows R to access your BigQuery project and datasets. In this [guest post](https://www.simoahava.com/analytics/join-ga4-google-ads-data-in-google-bigquery/#load-data-from-the-ga4-api) that I had written for [Simo Ahava's blog](https://www.simoahava.com/), I explain, among other things, how to create a service account.
+
+```R
+# Define table identifiers
+project_id <- "de-simmer-course-2"
+dataset_id <- "articles"
+table_id <- "2025_09_29_article_path_analysis_query"
+```
+
+These variables store the location of your BigQuery table:
+
+- project_id = your Google Cloud project name
+- dataset_id = the dataset inside that project
+- table_id = the specific table you want to download
+
+```R
+# Download the table
+bq_table_info <- bq_table(project_id, dataset_id, table_id)
+raw_data <- bq_table_download(bq_table_info, bigint = "integer64")
+```
+
+bq_table() builds a reference to the table using the three IDs.
+bq_table_download() actually retrieves the table’s data from BigQuery into R as a dataframe (tibble).
+
+The bigint = "integer64" argument ensures large integers (like timestamps or user IDs) are preserved correctly instead of being truncated.
