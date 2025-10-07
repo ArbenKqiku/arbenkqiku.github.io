@@ -257,4 +257,111 @@ Here is the result:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-1.9.png" alt="linearly separable data">
 
+Now, let's keep only the useful columns, `user_pseudo_id` and `navigation`:
+
+```R
+raw_data %>% 
+
+  # Intermediary code
+  
+  select(unique_session_id, navigation)
+```
+
+Here is the result:
+
+<img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-2.1.png" alt="linearly separable data">
+
+Our next goal is to remove duplicate consecutive events. For example, if a user generates two consecutive `page_view` events on the same page, we want to keep only one of them.
+
+To do this, we first need to compare each event with the one that came before it. For every `unique_session_id`, we’ll shift the `navigation` column one step forward to create a new column, `navigation_lag`.
+
+```R
+raw_data %>% 
+
+  # Intermediary code
+  
+  group_by(unique_session_id) %>% 
+  mutate(navigation_lag = navigation %>% lag()) %>% 
+  ungroup()
+```
+
+Now, within each `unique_session_id`, the values of `navigation` have been moved down one row in the `navigation_lag` column:
+
+<img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-2.2.png" alt="linearly separable data">
+
+Next, whenever the value in `navigation_lag` is `NA`, it means that this was the first page of the session. We’ll label those cases as "entrance" and keep the rest unchanged:
+
+```R
+raw_data %>% 
+
+  # Intermediary code
+  
+  mutate(navigation_lag = case_when(
+    is.na(navigation_lag) ~ "entrance",
+    TRUE ~ navigation_lag
+  ))
+```
+
+Here is the result:
+
+<img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-2.3.png" alt="linearly separable data">
+
+Finally, whenever `navigation` equals `navigation_lag`, as displayed in the image below:
+
+<img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-2.4.png" alt="linearly separable data">
+
+That means the user hasn't changed `page_location`, therefore these rows are redundant and we can remove them:
+
+```R
+raw_data %>% 
+
+  # Intermediary code
+  
+  filter(navigation != navigation_lag)
+```
+
+Here is the result:
+
+<img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-2.5.png" alt="linearly separable data">
+
+To make the paths more readable, let's rename "/" or "/store.html" with "home":
+
+```R
+raw_data %>% 
+
+  # Intermediary code
+  
+  mutate(navigation = case_when(
+    navigation %in% c("/", "/store.html") ~ "home",
+    TRUE ~ navigation
+  ))
+```
+
+Here is the result:
+
+<img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-2.7.png" alt="linearly separable data">
+
+Now, for each `unique_session_id`, we can combine all navigation steps into a single sequence to represent the user’s full path. Each step will be separated by " >>> " for readability:
+
+```R
+raw_data %>% 
+
+  # Intermediary code
+  
+  group_by(unique_session_id) %>% 
+  reframe(path = paste(navigation, collapse = " >>> ")) %>% 
+  ungroup()
+```
+
+What this does:
+
+- `group_by(unique_session_id)` groups all events belonging to the same session.
+- `paste(navigation, collapse = " >>> ")` concatenates all navigation values in order, separating them with " >>> ".
+- `reframe()` returns one row per session, with a single path column that stores the full journey.
+
+Here is the result:
+
+<img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-2.6.png" alt="linearly separable data">
+
+
 
