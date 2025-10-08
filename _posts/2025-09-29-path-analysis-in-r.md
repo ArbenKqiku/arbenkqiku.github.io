@@ -363,5 +363,7 @@ Here is the result:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-2.6.png" alt="linearly separable data">
 
+Now, let's count how many times 
+
 
 
