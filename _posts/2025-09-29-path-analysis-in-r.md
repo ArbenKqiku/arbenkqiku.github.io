@@ -15,13 +15,30 @@ Path analysis is a technique web and product analysts use to understand how user
 
 For example: if you notice many users returning to a previous page, that’s a red flag. Something on the current page isn’t working such as broken UI, confusing copy, or a missing step.
 
-# Why run path analysis in R and not simply through the GA4 interface?
+# What business questions can we anwer with path analysis?
 
-You can run path analysis directly in [GA4’s Explore section](https://support.google.com/analytics/answer/9317498?hl=en). It’s visually appealing, but the view quickly becomes crowded — and it only shows the most frequent paths.
+* Where do users drop off most frequently?
+* What are the most common entry points?
+* How far do users typically progress through the purchase funnel?
+* How do promotion views affect engagement or conversion?
+* Are some landing pages “dead ends”?
+* Which pages lead to conversions most effectively?
+* What happens after users sign in?
+* How many steps does it take to reach a key goal?
+
+It is always important to start with business questions so that our analysis brings real value. We'll explore these questions once we've prepared the dataset.
+
+# What tools are we going to use?
+
+We'll retrieve the raw data with BigQuery and then we'll build the user paths with R.
+
+You can run path analysis directly in [GA4’s Explore section](https://support.google.com/analytics/answer/9317498?hl=en). It’s visually appealing, but the view quickly becomes crowded as it only shows the most frequent paths.
 
 With R, you’re not limited to the top results. You can count every possible path, no matter how rare. You can also mix dimensions, such as combining page location with events, to build a richer picture of user behavior.
 
 For this analysis, we're going to use [Google's Merchandise Store BigQuery Export](https://developers.google.com/analytics/bigquery/web-ecommerce-demo-dataset?sjid=6808846338302705229-EU).
+
+# Extracting data from BigQuery
 
 We want to understand how users move through the website and what they actually do once they are there. For this, we are interested in page views and ecommerce events.
 
@@ -56,106 +73,64 @@ order by
   user_pseudo_id, session_id, event_timestamp
 ```
 
-Here is the result:
+Result:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-1.1.png" alt="linearly separable data">
 
 Let's save the result as a BigQuery table.
 
+# Download raw data in R
+
 Now, let's download the entire table in R:
 
 ```R
 # Load libraries
-library(tidyverse)
-library(bigrquery)
+library(tidyverse) # data wrangling and visualization
+library(bigrquery) # BigQuery client for R
 
-# 1 Auth ----
+# 1 Authenticate to BigQuery with a service account JSON ----
 bq_auth(path = "service-account.json")
 
-# 2 Retrieve data ----
+# 2 BigQuery table reference ----
 project_id <- "de-simmer-course-2"
 dataset_id <- "articles"
 table_id <- "2025_09_29_article_path_analysis_query"
 
   # download table
 bq_table_info <- bq_table(project_id, dataset_id, table_id)
+  # bigint = "integer64" preserves large integers (ids, timestamps)
 raw_data <- bq_table_download(bq_table_info, bigint = "integer64")
 ```
-
-Here is what is happening:
-
-```R
-# Load libraries
-library(tidyverse)
-library(bigrquery)
-```
-
-tidyverse provides tools for data wrangling and visualization.
-bigrquery lets you connect to and query Google BigQuery directly from R.
-
-```R
-# Authenticate to BigQuery
-bq_auth(path = "service-account.json")
-```
-This line authenticates your R session with Google Cloud using a service account (service-account.json). It’s what allows R to access your BigQuery project and datasets. In this [guest post](https://www.simoahava.com/analytics/join-ga4-google-ads-data-in-google-bigquery/#load-data-from-the-ga4-api) that I had written for [Simo Ahava's blog](https://www.simoahava.com/), I explain, among other things, how to create a service account.
-
-```R
-# Define table identifiers
-project_id <- "de-simmer-course-2"
-dataset_id <- "articles"
-table_id <- "2025_09_29_article_path_analysis_query"
-```
-
-These variables store the location of your BigQuery table:
-
-- project_id = your Google Cloud project name
-- dataset_id = the dataset inside that project
-- table_id = the specific table you want to download
-
-```R
-# Download the table
-bq_table_info <- bq_table(project_id, dataset_id, table_id)
-raw_data <- bq_table_download(bq_table_info, bigint = "integer64")
-```
-
-bq_table() builds a reference to the table using the three IDs.
-bq_table_download() actually retrieves the table’s data from BigQuery into R as a dataframe (tibble).
-
-The bigint = "integer64" argument ensures large integers (like timestamps or user IDs) are preserved correctly instead of being truncated.
-
 As you can see, our dataset has over 2M+ rows:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-1.2.png" alt="linearly separable data">
+
+# Clean the data
 
 We are only interested in how users navigate between pages, not the full URLs. So we can remove the main domain (for example, "https://shop.googlemerchandisestore.com") and keep only the path, such as "/home" or "/products".
 
 ```R
 raw_data %>% 
   
+  # Remove the domain (everything before ".com") from each URL
+  # ".*\\.com" = any characters up to and including ".com"
   mutate(page_location = page_location %>% str_remove_all(".*\\.com"))
 ```
 
-What’s happening in the code:
-
-`mutate()` creates or modifies a column inside the dataset. Here, it updates the existing page_location column.
-
-`str_remove_all(".*\\.com")` uses a regular expression (regex) to remove everything before and including .com.
-
-- `.` matches any character.
-- `*` means “zero or more times”, so together `.*` means “any sequence of characters.”
-- `\\.` escapes the dot, so it is treated as a literal period rather than the regex wildcard for “any character.”
-
-The result keeps only what comes after .com, which represents the relative page path (e.g., "/home" instead of "https://shop.googlemerchandisestore.com/home"). Here is what the result looks like:
+Here is what the result looks like:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-1.4.png" alt="linearly separable data">
 
-Since we’re working with a large dataset, processing can take some time. To test our code more efficiently, we can apply it to only the first 100,000 rows. Once we’re sure everything works as expected, we can then run it on the full dataset. We can use the `slice()` function to select a specific range of rows:
+Since we’re working with a large dataset, processing can take some time. To test our code more efficiently, we can apply it to only the first 100,000 rows. Once we’re sure everything works as expected, we can then run it on the full dataset.
 
 ```R
 raw_data %>% 
   
+  # select first 100.000 rows
   slice(1:100000) %>% 
   
+  # Remove the domain (everything before ".com") from each URL
+  # ".*\\.com" = any characters up to and including ".com"
   mutate(page_location = page_location %>% str_remove_all(".*\\.com"))
 ```
 
@@ -171,9 +146,7 @@ Next, let's create a `unique_session_id` column, which is the concatenation of t
 ```R
 raw_data %>% 
   
-  slice(1:100000) %>% 
-  
-  mutate(page_location = page_location %>% str_remove_all(".*\\.com")) %>% 
+  # Intermediary code
   
   mutate(unique_session_id = str_c(user_pseudo_id, session_id))
 ```
@@ -182,21 +155,18 @@ Now we have a new column:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-1.6.png" alt="linearly separable data">
 
-With the `select()` function, you can choose which columns to keep or remove from your dataset. In our case, we’ll remove the columns `user_pseudo_id` and `session_id`, since they’re no longer needed for the next steps of our analysis.
+Let's remove the columns `user_pseudo_id` and `session_id`, since they’re no longer needed for the next steps of our analysis.
 
 ```R
 raw_data %>% 
   
-  slice(1:100000) %>% 
+  # Intermediary code
   
-  mutate(page_location = page_location %>% str_remove_all(".*\\.com")) %>% 
-  
-  mutate(unique_session_id = str_c(user_pseudo_id, session_id)) %>% 
-  
+  # remove user_pseudo_id and session_id
   select(-user_pseudo_id, -session_id)
 ```
 
-Here is the result:
+Result:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-1.7.png" alt="linearly separable data">
 
@@ -205,18 +175,13 @@ Actually, let's reorder the columns, let's have the `unique_session_id` first:
 ```R
 raw_data %>% 
   
-  slice(1:100000) %>% 
+  # Intermediary code
   
-  mutate(page_location = page_location %>% str_remove_all(".*\\.com")) %>% 
-  
-  mutate(unique_session_id = str_c(user_pseudo_id, session_id)) %>% 
-  
-  select(-user_pseudo_id, -session_id) %>% 
-  
+  # reorder columns
   select(unique_session_id, event_name, page_location)
 ```
 
-Here is the result:
+Result:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-1.8.png" alt="linearly separable data">
 
@@ -225,15 +190,7 @@ Our goal is to understand which pages users visited and what actions they perfor
 ```R
 raw_data %>% 
   
-  slice(1:100000) %>% 
-  
-  mutate(page_location = page_location %>% str_remove_all(".*\\.com")) %>% 
-  
-  mutate(unique_session_id = str_c(user_pseudo_id, session_id)) %>% 
-  
-  select(-user_pseudo_id, -session_id) %>% 
-  
-  select(unique_session_id, event_name, page_location) %>% 
+  # Intermediary code
   
   mutate(navigation = case_when(
     event_name == "page_view" ~ page_location,
@@ -241,19 +198,7 @@ raw_data %>%
   ))
 ```
 
-Here is what's happening in the code:
-
-`mutate(navigation = case_when(...))` creates a new column called navigation.
-
-The `case_when()` function works like an “if–else” statement:
-
-When `event_name` is `page_view`, it sets navigation equal to the `page_location`.
-
-For all other events (TRUE ~ `event_name`), it sets navigation equal to the name of the event (e.g., `view_promotion`, `add_to_cart`, etc.).
-
-The result is a single column that captures both where the user was and what they did there. This navigation column will be key for building the user journey in the next steps, since it merges page views and user actions into a single chronological sequence.
-
-Here is the result:
+The result is a single column that captures both where the user was and what they did there. This navigation column will be key for building the user journey in the next steps, since it merges page views and user actions into a single chronological sequence:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-1.9.png" alt="linearly separable data">
 
@@ -267,7 +212,7 @@ raw_data %>%
   select(unique_session_id, navigation)
 ```
 
-Here is the result:
+Result:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-2.1.png" alt="linearly separable data">
 
@@ -302,7 +247,7 @@ raw_data %>%
   ))
 ```
 
-Here is the result:
+Result:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-2.3.png" alt="linearly separable data">
 
@@ -320,7 +265,7 @@ raw_data %>%
   filter(navigation != navigation_lag)
 ```
 
-Here is the result:
+Result:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-2.5.png" alt="linearly separable data">
 
@@ -337,7 +282,7 @@ raw_data %>%
   ))
 ```
 
-Here is the result:
+Result:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-2.7.png" alt="linearly separable data">
 
@@ -359,7 +304,7 @@ What this does:
 - `paste(navigation, collapse = " >>> ")` concatenates all navigation values in order, separating them with " >>> ".
 - `reframe()` returns one row per session, with a single path column that stores the full journey.
 
-Here is the result:
+Result:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-2.6.png" alt="linearly separable data">
 
@@ -377,7 +322,7 @@ raw_data %>%
   arrange(desc(count))
 ```
 
-Here is the result:
+Result:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-2.6.png" alt="linearly separable data">
 
@@ -397,6 +342,8 @@ raw_data %>%
   arrange(desc(count))
 ```
 
+# Data enrichment
+
 Now, let's enrich out user paths. Let's count how many nodes each user path contains:
 
 ```R
@@ -405,7 +352,7 @@ paths_enriched <- paths %>%
   mutate(number_of_nodes = str_count(path, " >>> ") + 1)
 ```
 
-Here is the result:
+Result:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-3.1.png" alt="linearly separable data">
 
@@ -428,7 +375,7 @@ paths_enriched %>%
   mutate(pct_count = count / sum(count))
 ```
 
-Here is the result:
+Result:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-3.2.png" alt="linearly separable data">
 
@@ -446,7 +393,7 @@ paths_enriched %>%
   mutate(pct_count = count / sum(count))
 ```
 
-Here is the result:
+Result:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-3.3.png" alt="linearly separable data">
 
@@ -469,7 +416,7 @@ paths_enriched %>%
   mutate(pct_count = count / sum(count))
 ```
 
-Here is the result:
+Result:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-3.4.png" alt="linearly separable data">
 
@@ -509,7 +456,7 @@ Later, the data is grouped by `latest_funnel_step`, and the total number of path
 
 Then, We then compute the share of each funnel step relative to the total, creating a `pct_count` column. Finally, `arrange(desc(count))` sorts the funnel steps from the most common to the least common.
 
-Here is the result:
+Result:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-3.5.png" alt="linearly separable data">
 
@@ -534,7 +481,7 @@ paths_enriched %>%
   mutate(pct_count = count / sum(count))
 ```
 
-Here is the result:
+Result:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-3.6.png" alt="linearly separable data">
 
@@ -550,7 +497,7 @@ paths_enriched %>%
   mutate(landing_page = ifelse(is.na(landing_page), path, landing_page))
 ```
 
-Here is the result:
+Result:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-3.7.png" alt="linearly separable data">
 
@@ -571,7 +518,7 @@ paths_enriched %>%
   arrange(desc(count))
 ```
 
-Here is the result:
+Result:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-3.8.png" alt="linearly separable data">
 
@@ -591,7 +538,7 @@ paths_enriched %>%
   arrange(desc(count))
 ```
 
-Here is the result:
+Result:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-4.1.png" alt="linearly separable data">
 
