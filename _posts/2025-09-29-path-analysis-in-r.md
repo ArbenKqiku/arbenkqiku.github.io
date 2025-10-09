@@ -344,7 +344,7 @@ raw_data %>%
 
 # Data enrichment
 
-Now, let's enrich out user paths. Let's count how many nodes each user path contains:
+Now that ou data is clean, we can actually enrich it. For example, we can count how many nodes each user path contains:
 
 ```R
 paths_enriched <- paths %>% 
