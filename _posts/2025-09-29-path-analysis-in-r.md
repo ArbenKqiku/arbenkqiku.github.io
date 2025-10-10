@@ -73,7 +73,7 @@ order by
   user_pseudo_id, session_id, event_timestamp
 ```
 
-Result:
+This is the raw data the we're going to use:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-1.1.png" alt="linearly separable data">
 
@@ -117,7 +117,7 @@ raw_data %>%
   mutate(page_location = page_location %>% str_remove_all(".*\\.com"))
 ```
 
-Here is what the result looks like:
+Now the data is easier to read:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-1.4.png" alt="linearly separable data">
 
@@ -166,7 +166,7 @@ raw_data %>%
   select(-user_pseudo_id, -session_id)
 ```
 
-Result:
+Much better:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-1.7.png" alt="linearly separable data">
 
@@ -181,7 +181,7 @@ raw_data %>%
   select(unique_session_id, event_name, page_location)
 ```
 
-Result:
+I prefer to have a unique identifier to the left:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-1.8.png" alt="linearly separable data">
 
@@ -202,7 +202,7 @@ The result is a single column that captures both where the user was and what the
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-1.9.png" alt="linearly separable data">
 
-Now, let's keep only the useful columns, `user_pseudo_id` and `navigation`:
+Now, let's keep only the useful columns, `unique_session_id` and `navigation`:
 
 ```R
 raw_data %>% 
@@ -212,7 +212,7 @@ raw_data %>%
   select(unique_session_id, navigation)
 ```
 
-Result:
+These columns are sufficient to build user paths:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-2.1.png" alt="linearly separable data">
 
@@ -247,7 +247,7 @@ raw_data %>%
   ))
 ```
 
-Result:
+This way we have more descriptive values:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-2.3.png" alt="linearly separable data">
 
@@ -265,7 +265,7 @@ raw_data %>%
   filter(navigation != navigation_lag)
 ```
 
-Result:
+Here is out table without those duplicates:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-2.5.png" alt="linearly separable data">
 
@@ -282,7 +282,7 @@ raw_data %>%
   ))
 ```
 
-Result:
+Much more readable:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-2.7.png" alt="linearly separable data">
 
@@ -304,11 +304,11 @@ What this does:
 - `paste(navigation, collapse = " >>> ")` concatenates all navigation values in order, separating them with " >>> ".
 - `reframe()` returns one row per session, with a single path column that stores the full journey.
 
-Result:
+Now each row represents the full path of a user:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-2.6.png" alt="linearly separable data">
 
-Now, let's count how many times all the different user paths occur and order them in descending order:
+We cannot analyze each row indiviually, so, let's count how many times all the different user paths occur and order them in descending order:
 
 ```R
 raw_data %>% 
@@ -322,9 +322,9 @@ raw_data %>%
   arrange(desc(count))
 ```
 
-Result:
+This way we can analyze data more easily:
 
-<img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-2.6.png" alt="linearly separable data">
+<img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-2.8.png" alt="linearly separable data">
 
 Now that we’ve confirmed the code works as expected, we can remove the `slice(1:100000)` line so that it runs on the entire dataset and we can save the result in a variable named `paths`:
 
@@ -352,7 +352,7 @@ paths_enriched <- paths %>%
   mutate(number_of_nodes = str_count(path, " >>> ") + 1)
 ```
 
-Result:
+This gives additional information to analyze our data:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-3.1.png" alt="linearly separable data">
 
