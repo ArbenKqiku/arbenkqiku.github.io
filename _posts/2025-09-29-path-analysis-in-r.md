@@ -12,13 +12,21 @@ mathjax: "true"
 # Table of contents
 
 - [What is path analysis?](#what-is-path-analysis)
-- [What business questions can we anwer with path analysis?](#what-business-questions-can-we-anwer-with-path-analysis?)
+- [What business questions can we answer with path analysis?](#what-business-questions-can-we-anwer-with-path-analysis?)
 - [What tools are we going to use?](#what-tools-are-we-going-to-use)
 - [Extracting data from BigQuery](#extracting-data-from-bigquery)
 - [Download raw data in R](#download-raw-data-in-r)
 - [Data cleaning](#data-cleaning)
 - [Data enrichment](#data-enrichment)
 - [Data analysis](#data-analysis)
+  - [Where do users drop off most frequently?](#where-do-users-drop-off-most-frequently)
+  - [What are the most common entry points?](#what-are-the-most-common-entry-points)
+  - [How far do users typically progress through the purchase funnel?](#how-far-do-users-typically-progress-through-the-purchase-funnel)
+  - [How do promotion views affect engagement or conversion?](#how-do-promotion-views-affect-engagement-or-conversion)
+  - [Are some landing pages “dead ends”?](#are-some-landing-pages-dead-ends)
+  - [Which pages lead to conversions most effectively?](#which-pages-lead-to-conversions-most-effectively)
+  - [What happens after users sign in?](#what-happens-after-users-sign-in)
+  - [How many steps does it take to reach a key goal?](#how-many-steps-does-it-take-to-reach-a-key-goal)
 
 # What is path analysis?
 
@@ -26,7 +34,7 @@ Path analysis is a technique web and product analysts use to understand how user
 
 For example: if you notice many users returning to a previous page, that’s a red flag. Something on the current page isn’t working such as broken UI, confusing copy, or a missing step.
 
-# What business questions can we anwer with path analysis?
+# What business questions can we answer with path analysis?
 
 * Where do users drop off most frequently?
 * What are the most common entry points?
@@ -368,6 +376,16 @@ This gives additional information to analyze our data:
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-3.1.png" alt="linearly separable data">
 
 # Data analysis
+## Where do users drop off most frequently?
+To understand where 
+
+## What are the most common entry points?
+## How far do users typically progress through the purchase funnel?
+## How do promotion views affect engagement or conversion?
+## Are some landing pages “dead ends”?
+## Which pages lead to conversions most effectively?
+## What happens after users sign in?
+## How many steps does it take to reach a key goal?
 
 Now that we have all user paths, let’s check how many of them include the event `view_promotion`. To do that, we will label each path depending on whether this event appears in it, and then calculate how frequent it is:
 
