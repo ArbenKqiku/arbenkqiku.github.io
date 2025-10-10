@@ -377,7 +377,29 @@ This gives additional information to analyze our data:
 
 # Data analysis
 ## Where do users drop off most frequently?
-To understand where 
+To understand where user drop off most frequently, we have to identify the most common exit pages or exit events. Let's clean the data so we can keep only the last step of each path. 
+
+```R
+paths_enriched %>% 
+  
+  # Keep only last step
+  mutate(last_step = str_extract(path, "[^>]+$") %>% str_trim()) %>%
+    
+  # Sum occurence of last step  
+  group_by(last_step) %>% 
+  reframe(count = sum(count)) %>% 
+  ungroup() %>% 
+    
+  arrange(desc(count))
+```
+
+Here is the count of each exit page or event:
+
+<img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-4.1.png" alt="linearly separable data">
+
+The fact that many sessions end on category or product pages (like /Apparel) suggests users reach a point of evaluation but not conversion. That can mean:
+- Product appeal issue — users aren’t convinced by what they see (price, description, imagery)
+- UX issue — product discovery or comparison is frustrating (e.g., filters, sort order, load speed)
 
 ## What are the most common entry points?
 ## How far do users typically progress through the purchase funnel?
@@ -553,24 +575,3 @@ Result:
 
 It would seem that people that land on the homepage do explore the website quite a lot, whereas people who land on a product or category page do not stick for long. Maybe those pages deserve more attention.
 
-Finally, let's see what are the most common exit pages:
-
-```R
-paths_enriched %>% 
-  
-  mutate(last_step = str_extract(path, "[^>]+$") %>% str_trim()) %>%
-    
-  group_by(last_step) %>% 
-  reframe(count = sum(count)) %>% 
-  ungroup() %>% 
-    
-  arrange(desc(count))
-```
-
-Result:
-
-<img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-4.1.png" alt="linearly separable data">
-
-The fact that many sessions end on category or product pages (like /Apparel) suggests users reach a point of evaluation but not conversion. That can mean:
-- Product appeal issue — users aren’t convinced by what they see (price, description, imagery)
-- UX issue — product discovery or comparison is frustrating (e.g., filters, sort order, load speed)
