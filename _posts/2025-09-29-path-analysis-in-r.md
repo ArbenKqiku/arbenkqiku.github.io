@@ -9,6 +9,17 @@ excerpt: "How to Perform Path Analysis in R with GA4 Data"
 mathjax: "true"
 ---
 
+# Table of contents
+
+- [What is path analysis?](#what-is-path-analysis)
+- [What business questions can we anwer with path analysis?](#what-business-questions-can-we-anwer-with-path-analysis?)
+- [What tools are we going to use?](#what-tools-are-we-going-to-use)
+- [Extracting data from BigQuery](#extracting-data-from-bigquery)
+- [Download raw data in R](#download-raw-data-in-r)
+- [Data cleaning](#data-cleaning)
+- [Data enrichment](#data-enrichment)
+- [Data analysis](#data-analysis)
+
 # What is path analysis?
 
 Path analysis is a technique web and product analysts use to understand how users move through a website or app. It helps uncover friction points and dark patterns in the user journey.
@@ -105,7 +116,7 @@ As you can see, our dataset has over 2M+ rows:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-1.2.png" alt="linearly separable data">
 
-# Clean the data
+# Data cleaning
 
 We are only interested in how users navigate between pages, not the full URLs. So we can remove the main domain (for example, "https://shop.googlemerchandisestore.com") and keep only the path, such as "/home" or "/products".
 
@@ -344,7 +355,7 @@ raw_data %>%
 
 # Data enrichment
 
-Now that ou data is clean, we can actually enrich it. For example, we can count how many nodes each user path contains:
+Now that our data is clean, we can actually enrich it. For example, we can count how many nodes each user path contains:
 
 ```R
 paths_enriched <- paths %>% 
