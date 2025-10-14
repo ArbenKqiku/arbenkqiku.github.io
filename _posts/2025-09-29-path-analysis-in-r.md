@@ -397,11 +397,36 @@ Here is the count of each exit page or event:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-4.1.png" alt="linearly separable data">
 
-The fact that many sessions end on category or product pages (like /Apparel) suggests users reach a point of evaluation but not conversion. That can mean:
-- Product appeal issue — users aren’t convinced by what they see (price, description, imagery)
-- UX issue — product discovery or comparison is frustrating (e.g., filters, sort order, load speed)
+In most sessions, the last step is the home page. This could mean that users return to the home because they can’t find what they’re looking for, or that they leave the website right after arriving. Let’s take a closer look at the paths that end with the home page.
+
+```R
+paths_enriched %>% 
+  
+  # Create last step column
+  mutate(last_step = str_extract(path, "[^>]+$") %>% str_trim()) %>%
+    
+  # Filter paths that end in the home
+  filter(last_step == "home")
+```
+
+It seems that a large portion of users exit immediately after landing on the home page.
+
+<img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-4.2.png" alt="linearly separable data">
+
+When that happens, it usually means there’s a mismatch between user intent and page content, users didn’t find what they expected That could point to a targeting issue, where campaigns are driving unqualified traffic. Or it could be a UX problem, where users struggle to navigate or understand what the site offers.
+
+Unfortunately, since this dataset is four years old, we can’t audit the website directly to confirm which is the case.
+
+Another observation: many sessions also end on category or product pages (like /Apparel). That suggests users reach the point of evaluation but not conversion. Possible explanations include:
+- Product appeal issues, users aren’t convinced by the offer (price, description, imagery).
+- UX issues, product discovery or comparison may be frustrating (filters, sorting, or speed).
+
+Either way, the home and the Apparel category seem like a good starting points for the UX/UI team, as they drive the highest number of exits.
 
 ## What are the most common entry points?
+
+
+
 ## How far do users typically progress through the purchase funnel?
 ## How do promotion views affect engagement or conversion?
 ## Are some landing pages “dead ends”?
