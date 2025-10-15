@@ -106,6 +106,8 @@ Now, let's download the entire table in R:
 # Load libraries
 library(tidyverse) # data wrangling and visualization
 library(bigrquery) # BigQuery client for R
+library(ggrepel) # data viz package
+library(scales) # data viz package
 
 # 1 Authenticate to BigQuery with a service account JSON ----
 bq_auth(path = "service-account.json")
@@ -586,6 +588,53 @@ funnel_steps_joined <- view_item_conv_rate %>%
 This gives a nice table of all landing pages and their respective conversion rates:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-4.8.png" alt="linearly separable data">
+
+But is difficult to read, so maybe we can create a scatterplot of `add_to_cart` rate and `purchase` rate.
+
+```R
+funnel_steps_joined %>% 
+  
+  arrange(desc(count)) %>% 
+  
+  # Get top 15 landing pages
+  slice(1:15) %>%
+  
+  # Remove basket page
+  filter(landing_page != "/basket.html") %>%
+  
+  # Remove /Google Redesign/ from pages, so that text is more readable
+  mutate(landing_page = landing_page %>% str_remove_all("\\/Google\\+Redesign\\/|\\/Google\\ Redesign\\/")) %>% 
+  
+  # select variables to plot
+  ggplot(aes(add_to_cart_conv_rate, purchase_conv_rate)) +
+  
+  # add coordinates with size based on landing pages count
+  geom_point(aes(size = count)) +
+  
+  # add landing pages to graph
+  geom_text_repel(aes(label = landing_page),
+                  size = 3) +
+  
+  # add diagonal line that cuts the plot in 2
+  geom_abline(intercept = 0, slope = 0.33, linetype = "dashed", color = "red")+
+  
+  # change axis labels to percentages
+  scale_y_continuous(labels = percent_format()) +
+  scale_x_continuous(labels = percent_format()) +
+  
+  # modify label names
+  labs(
+    x = "Add to cart conv. rate",
+    y = "Purchase rate",
+    size = "Count of LPs",
+    caption = "Author: Arben Kqiku",
+    title = "Conversion rates of top 15 landing pages"
+  )
+```
+
+Everything below the red diagonal represents landing pages where the purchase rate is lower than the add-to-cart rate would predict. In other words, users often add items to the cart but fail to complete the purchase, suggesting friction in the checkout process or weak purchase intent. Our UX/UI team should on pages below the line to identify where users hesitate or drop off post–add-to-cart.
+
+<img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-4.9.png" alt="linearly separable data">
 
 ## How do promotion views affect engagement or conversion?
 One thing that we can observe from the data is that many user paths include a `view_promotion` event. So, it would be interesting to understand whether this event leads to a higher conversion rate.
