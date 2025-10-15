@@ -425,11 +425,211 @@ Either way, the home and the Apparel category seem like a good starting points f
 
 ## What are the most common entry points?
 
+To get the most common entry points, we must extract the landing page from each user path, namely the first node:
 
+```R
+paths_enriched %>% 
+  
+  # Extract everything before " >>> "
+  mutate(landing_page = path %>% str_extract(".* >>>") %>% str_replace_all(" >>>.*", "")) %>%
+  
+  # If there is only one node, use the path as the landing page
+  mutate(landing_page = ifelse(is.na(landing_page), path, landing_page)) %>% 
+    
+  # Count of landing pages
+  group_by(landing_page) %>% 
+  reframe(count = sum(count)) %>% 
+  ungroup() %>% 
+    
+  arrange(desc(count)) 
+```
+
+We can see that the home page drives by far the most traffic. After that, most sessions start on product category pages.
+
+<img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-4.3.png" alt="linearly separable data">
+
+Interestingly, the pages where users enter the website are often the same ones where they leave. A useful next step would be to analyze how far users progress through the website depending on their landing page.
+
+## Are some landing pages “dead ends”?
+
+To understand what landing pages are dead ends, we must extract the average node length by landing page. Also, it is important to weight the node lenght by session count.
+
+```R
+paths_enriched %>% 
+  
+  # Extract everything before " >>> "
+  mutate(landing_page = path %>% str_extract(".* >>>") %>% str_replace_all(" >>>.*", "")) %>%
+  
+  # If there is only one node, use the path as the landing page
+  mutate(landing_page = ifelse(is.na(landing_page), path, landing_page)) %>% 
+  
+  # Calculate average weighted node length
+  group_by(landing_page) %>% 
+  reframe(weighted_avg_nodes = weighted.mean(number_of_nodes, count),
+          count = sum(count)) %>% 
+  ungroup() %>% 
+    
+  arrange(desc(count))
+```
+
+Actually, we can see that the home does not perform as bad as the previous analyses would suggest, as the average node length is 6.97.
+
+<img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-4.4.png" alt="linearly separable data">
+
+In terms of product categories, we can see that certain categories perform much better than others. For example, Apparel and YouTube categories have 2.1 and 2.6 average node lengths respectively, whereas Mens and Google have have 5 and 9.96 average node lengths. 
+
+## Funnel analysis by landing pages
+We can now combine path analysis with funnel analysis. For each landing page, we’ll measure how often key e-commerce events occur — such as `view_item`, `add_to_cart`, and `purchase`, to understand how effectively each entry point drives users through the funnel.
+
+First, let's extract the landing page from each path, and also whether a path contains a `view_item`, `add_to_cart` or `purchase` event:
+
+```R
+paths_with_funnel_steps <- paths_enriched %>% 
+    
+  # Extract everything before " >>> "
+  mutate(landing_page = path %>% str_extract(".* >>>") %>% str_replace_all(" >>>.*", "")) %>%
+  
+  # If there is only one node, use the path as the landing page
+  mutate(landing_page = ifelse(is.na(landing_page), path, landing_page)) %>% 
+    
+  # Label paths based on view_item event
+  mutate(view_item = case_when(
+    path %>% str_detect("view_item") ~ "yes",
+    TRUE ~ "no"
+  )) %>% 
+    
+  # Label paths based on add_to_cart event
+  mutate(add_to_cart = case_when(
+    path %>% str_detect("add_to_cart") ~ "yes",
+    TRUE ~ "no"
+  )) %>% 
+    
+  # Label paths based on purchase event
+  mutate(purchase = case_when(
+    path %>% str_detect("purchase") ~ "yes",
+    TRUE ~ "no"
+  )) 
+```
+
+Now each path is correctly labeled:
+
+<img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-4.6.png" alt="linearly separable data">
+
+Then, for each e-commerce event, let's calculate the conversion rate by landing page:
+
+```R
+view_item_conv_rate <- 
+  
+  paths_with_funnel_steps %>% 
+  
+  # Count combinations of landing page and view_item
+  group_by(landing_page, view_item) %>% 
+  reframe(count = sum(count)) %>% 
+  ungroup() %>% 
+  
+  pivot_wider(names_from = view_item, values_from = count, names_prefix = "view_item_") %>% 
+  
+  replace(is.na(.), 0) %>% 
+  
+  # Keep only pages with a significant amount of view item events
+  filter(view_item_no > 100) %>% 
+  
+  # Calculate view item conversion rate
+  mutate(view_item_conv_rate = view_item_yes / (view_item_yes + view_item_no)) %>% 
+    
+  # Sum view item events to get an idea of the importance of each page
+  mutate(count = view_item_no + view_item_yes) %>% 
+  
+  # Select only landing page and view item conversion rate columns
+  select(landing_page, count, view_item_conv_rate)
+```
+
+This gives us a table showing how often each page served as a landing page across all paths, along with its corresponding `view_item` conversion rate:
+
+<img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-4.7.png" alt="linearly separable data">
+
+Let's do the same for `add_to_cart`, but let's filter only the landing pages included in the `view_item` table we extracted before.
+
+```R
+# add_to_cart
+unique_pages_view_item = view_item_conv_rate %>% pull(landing_page) %>% unique()
+
+add_to_cart_conv_rate <- paths_with_funnel_steps %>% 
+  
+  filter(landing_page %in% unique_pages_view_item) %>% 
+  
+  group_by(landing_page, add_to_cart) %>% 
+  reframe(count = sum(count)) %>% 
+  ungroup() %>%
+  
+  pivot_wider(names_from = add_to_cart, values_from = count, names_prefix = "add_to_cart_") %>% 
+  
+  replace(is.na(.), 0) %>% 
+  
+  filter(add_to_cart_no > 100) %>% 
+  
+  mutate(add_to_cart_conv_rate = add_to_cart_yes / (add_to_cart_yes + add_to_cart_no)) %>%
+  
+  select(landing_page, add_to_cart_conv_rate)
+```
+
+Let's repeat the same thing for `purchase`. Finally, let's join the data:
+
+```R
+funnel_steps_joined <- view_item_conv_rate %>% 
+  
+  left_join(add_to_cart_conv_rate) %>% 
+  
+  left_join(purchase_conv_rate)
+```
+
+This gives a nice table of all landing pages and their respective conversion rates:
+
+<img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-4.8.png" alt="linearly separable data">
+
+## How do promotion views affect engagement or conversion?
+One thing that we can observe from the data is that many user paths include a `view_promotion` event. So, it would be interesting to understand whether this event leads to a higher conversion rate.
+
+To do that, we have separate the user paths that contain a `view_promotion` event from those who don't, and then, within each group see how many paths contain a `puchase` event.
+
+```R
+paths_enriched %>% 
+  
+  # Label paths based on view_promotion event
+  mutate(paths_with_view_promotion = case_when(
+    path %>% str_detect("view_promotion") ~ "view_promotion",
+    TRUE ~ "no view_promotion"
+  )) %>% 
+  
+  # Label paths based on purchase event
+  mutate(paths_with_purchase = case_when(
+    path %>% str_detect("purchase") ~ "purchase",
+    TRUE ~ "no purchase"
+  )) %>% 
+  
+  # Calculate combined count of view_promotion and purchase events
+  group_by(paths_with_view_promotion, paths_with_purchase) %>% 
+  reframe(count = sum(count)) %>% 
+  ungroup() %>% 
+  
+  # Calculate conversion rate
+  group_by(paths_with_view_promotion) %>% 
+  mutate(conv_rate = count / sum(count)) %>% 
+  ungroup() %>% 
+
+  # Extract conv. rate of view promotion Vs. no view promotion
+  filter(paths_with_purchase == "purchase") %>% 
+  
+  select(paths_with_view_promotion, conv_rate)
+```
+
+User paths that include a `view_promotion` event show a much higher conversion rate (3.3%) compared to those that don’t (0.3%).
+
+<img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-4.5.png" alt="linearly separable data">
+
+This is a strong signal, but correlation doesn’t imply causation. Are users who were already likely to buy simply more inclined to click on promotions, or do the promotions themselves drive conversions? To find out, we’d need to run an A/B test where one group is exposed to promotions and the other isn’t.
 
 ## How far do users typically progress through the purchase funnel?
-## How do promotion views affect engagement or conversion?
-## Are some landing pages “dead ends”?
 ## Which pages lead to conversions most effectively?
 ## What happens after users sign in?
 ## How many steps does it take to reach a key goal?
