@@ -30,11 +30,9 @@ mathjax: "true"
 
 # What is path analysis?
 
-Path analysis is a technique web and product analysts use to understand how users move through a website or app. It helps uncover friction points and dark patterns in the user journey.
-
-# What is a user path
-
 A user path is the sequence of steps a user takes through your site or product, typically the pages they visit in order, and optionally the events they trigger along the way.
+
+Path analysis is a technique web and product analysts use to understand how users move through a website or app. It helps uncover friction points and dark patterns in the user journey.
 
 # What business questions can we answer with path analysis?
 
