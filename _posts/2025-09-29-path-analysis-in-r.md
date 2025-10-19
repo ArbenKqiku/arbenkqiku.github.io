@@ -98,7 +98,7 @@ This is the raw data the we're going to use:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-1.1.png" alt="linearly separable data">
 
-If you would want to learn how to extract data from BigQuery, Simmer offers [a great course](#https://www.teamsimmer.com/all-courses/mastering-ga4-with-google-bigquery/).
+If you would want to learn how to extract data from BigQuery, Simmer offers [a great course](https://www.teamsimmer.com/all-courses/mastering-ga4-with-google-bigquery/).
 
 Anyway, let's save the result as a BigQuery table.
 
@@ -448,7 +448,7 @@ Interestingly, the pages where users enter the website are often the same ones w
 
 ## Are some landing pages “dead ends”?
 
-To understand what landing pages are dead ends, we must extract the average node length by landing page. Also, it is important to weight the node lenght by session count.
+To understand what landing pages are dead ends, we must extract the average node length by landing page. Also, it is important to weight the node length by session count.
 
 ```R
 paths_enriched %>% 
@@ -472,7 +472,7 @@ Actually, we can see that the **home** does not perform as bad as the previous a
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-4.4.png" alt="linearly separable data">
 
-In terms of product categories, we can see that certain categories perform much better than others. For example, **Apparel** and **YouTube** categories have 2.1 and 2.6 average node lengths respectively, whereas **Mens** and **Google** have have 5 and 9.96 average node lengths. So, I would probably urge the UX/UI team to focus on **Apparel** and **YouTube**, as they drive a lot traffic, but the average node length is very small.
+In terms of product categories, we can see that certain categories perform much better than others. For example, **Apparel** and **YouTube** categories have 2.1 and 2.6 average node lengths respectively, whereas **Mens** and **Google** have 5 and 9.96 average node lengths. So, I would probably urge the UX/UI team to focus on **Apparel** and **YouTube**, as they drive a lot traffic, but the average node length is very small.
 
 ## Funnel analysis by landing pages
 
@@ -647,7 +647,7 @@ Finally, **Apparel/Mens** and **Shop+By+Brand+Google** are strong performers, ef
 ## How do promotion views affect conversions?
 One thing that we can observe from the data is that many user paths include a `view_promotion` event. So, it would be interesting to understand whether this event leads to a higher conversion rate.
 
-To do that, we have separate the user paths that contain a `view_promotion` event from those who don't, and then, within each group see how many paths contain a `puchase` event.
+To do that, we have to separate the user paths that contain a `view_promotion` event from those who don't, and then, within each group see how many paths contain a `purchase` event.
 
 ```R
 paths_enriched %>% 
