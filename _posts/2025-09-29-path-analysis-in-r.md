@@ -1,6 +1,6 @@
 ---
 title: "From Clicks to Insights: Rebuilding Google’s Merchandise Store User Paths with R and BigQuery" 
-date: 2025-10-20
+date: 2025-10-18
 tags: [GA4, R, path-analysis, BigQuery]
 permalink: "use-r-bigquery-to-build-user-paths-google-merchandise-store"
 header: 
