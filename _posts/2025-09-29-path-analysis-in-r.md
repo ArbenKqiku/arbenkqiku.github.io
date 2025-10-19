@@ -94,7 +94,7 @@ order by
   user_pseudo_id, session_id, event_timestamp
 ```
 
-This is the raw data the we're going to use:
+This is the raw data the we're going to use. The data from the 2020-11-01 to the 2021-01-31.
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-1.1.png" alt="linearly separable data">
 
@@ -413,7 +413,7 @@ When that happens, it usually means there’s a mismatch between user intent and
 
 Unfortunately, since this dataset is four years old, we can’t audit the website directly to confirm which is the case.
 
-Another observation: many sessions also end on category or product pages (like **/Apparel**). That suggests users reach the point of evaluation but not conversion. Possible explanations include:
+Another observation: many user paths also end on category or product pages (like **/Apparel**). That suggests users reach the point of evaluation but not conversion. Possible explanations include:
 * Product appeal issues, users aren’t convinced by the offer (price, description, imagery).
 * UX issues, product discovery or comparison may be frustrating (filters, sorting, or speed).
 
@@ -440,7 +440,7 @@ paths_enriched %>%
   arrange(desc(count)) 
 ```
 
-We can see that the home page drives by far the most traffic. After that, most sessions start on product category pages.
+We can see that the home page drives by far the most traffic. After that, most user paths start on product category pages.
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-4.3.png" alt="linearly separable data">
 
@@ -448,7 +448,7 @@ Interestingly, the pages where users enter the website are often the same ones w
 
 ## Are some landing pages “dead ends”?
 
-To understand what landing pages are dead ends, we must extract the average node length by landing page. Also, it is important to weight the node length by session count.
+To understand what landing pages are dead ends, we must extract the average node length by landing page. Also, it is important to weight the node length by user path count.
 
 ```R
 paths_enriched %>% 
@@ -632,7 +632,7 @@ funnel_steps_joined %>%
   )
 ```
 
-In the chart below, the size of each point represents the number of landing page sessions, which we can use as a proxy for impact. The red diagonal shows the expected relationship between the add-to-cart rate and the purchase rate. Points below the line indicate landing pages where users often add products to their cart but rarely complete the purchase, a sign of friction in the checkout process or weak purchase intent.
+In the chart below, the size of each point represents the number of landing page count, which we can use as a proxy for impact. The red diagonal shows the expected relationship between the add-to-cart rate and the purchase rate. Points below the line indicate landing pages where users often add products to their cart but rarely complete the purchase, a sign of friction in the checkout process or weak purchase intent.
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-4.9.png" alt="linearly separable data">
 
@@ -688,7 +688,7 @@ This is a strong signal, but correlation doesn’t imply causation. Are users wh
 
 ## What happens after users sign in?
 
-Let’s filter all paths that include a sign-in event and enrich the data to identify whether those sessions contain a purchase event, whether they start with a sign-in, and what actions follow it.
+Let’s filter all paths that include a sign-in event and enrich the data to identify whether those user paths contain a purchase event, whether they start with a sign-in, and what actions follow it.
 
 ```R
 sign_in_clean <- paths_enriched %>% 
@@ -732,7 +732,7 @@ sign_in_clean %>%
   arrange(desc(count))
 ```
 
-We can see that in almost 20% of sessions, users leave the website immediately after signing in. This could point to an issue with the sign-in process itself or a tracking problem. Either way, it’s worth investigating, if this behavior is real, it could represent a significant loss in potential revenue.
+We can see that in almost 20% of user paths, users leave the website immediately after signing in. This could point to an issue with the sign-in process itself or a tracking problem. Either way, it’s worth investigating, if this behavior is real, it could represent a significant loss in potential revenue.
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-5.1.png" alt="linearly separable data">
 
@@ -754,12 +754,12 @@ How many paths start with a sign-in? If we look at the data, we can see that 15.
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-5.2.png" alt="linearly separable data">
 
-How do sessions that start with a sign-in impact purchases? Let's combine user paths that start with a sign in with those that contain a purchase event.
+How do user paths that start with a sign-in impact purchases? Let's combine user paths that start with a sign in with those that contain a purchase event.
 
 ```R
 sign_in_clean %>% 
   
-  # Count sessions that start with a sign in even with purchases
+  # Count user paths that start with a sign in even with purchases
   group_by(start_with_sign_in, purchase) %>% 
   reframe(count = sum(count)) %>% 
   ungroup() %>% 
