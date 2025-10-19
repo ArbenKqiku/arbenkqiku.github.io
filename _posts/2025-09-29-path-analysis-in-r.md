@@ -632,7 +632,7 @@ funnel_steps_joined %>%
   )
 ```
 
-In the chart below, the size of each point represents the number of landing page count, which we can use as a proxy for impact. The red diagonal shows the expected relationship between the add-to-cart rate and the purchase rate. Points below the line indicate landing pages where users often add products to their cart but rarely complete the purchase, a sign of friction in the checkout process or weak purchase intent.
+In the chart below, the size of each point represents the number of landing page count, which we can use as a proxy for impact. The red diagonal is a rule-of-thumb baseline relating add to cart conversion rate to purchase conversion rate. Points below the line indicate landing pages where users often add products to their cart but rarely complete the purchase, a sign of friction in the checkout process or weak purchase intent.
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-4.9.png" alt="linearly separable data">
 
