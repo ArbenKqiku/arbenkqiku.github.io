@@ -1,11 +1,11 @@
 ---
-title: ""
-date: 2024-03-29
+title: "From Clicks to Insights: Rebuilding Google’s Merchandise Store User Paths with R and BigQuery" 
+date: 2025-10-20
 tags: [GA4, R, path-analysis, BigQuery]
-permalink: "ga4-path-analysis-in-r"
-header:
-  image: "images/article-4-kafka-streaming/21-schedule/project-diagram.png"
-excerpt: "How to Perform Path Analysis in R with GA4 Data"
+permalink: "use-r-bigquery-to-build-user-paths-google-merchandise-store"
+header: 
+  image: "images/article-5-path-analysis/image-5.4.png"
+excerpt: "From Clicks to Insights: Rebuilding Google’s Merchandise Store User Paths with R and BigQuery"
 mathjax: "true"
 ---
 
