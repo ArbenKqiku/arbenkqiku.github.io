@@ -98,7 +98,7 @@ This is the raw data the we're going to use:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-1.1.png" alt="linearly separable data">
 
-If you would want to learn how to extract data from BigQuery, Simmer offers [a great course] (#https://www.teamsimmer.com/all-courses/mastering-ga4-with-google-bigquery/).
+If you would want to learn how to extract data from BigQuery, Simmer offers [a great course](#https://www.teamsimmer.com/all-courses/mastering-ga4-with-google-bigquery/).
 
 Anyway, let's save the result as a BigQuery table.
 
