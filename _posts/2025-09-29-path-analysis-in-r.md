@@ -415,7 +415,7 @@ It seems that a large portion of users exit immediately after landing on the hom
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-4.2.png" alt="linearly separable data">
 
-When that happens, it usually means there’s a mismatch between user intent and page content, users didn’t find what they expected That could point to a targeting issue, where campaigns are driving unqualified traffic. Or it could be a UX problem, where users struggle to navigate or understand what the site offers.
+When that happens, it usually means there’s a mismatch between user intent and page content, users didn’t find what they expected. That could point to a targeting issue, where campaigns are driving unqualified traffic. Or it could be a UX problem, where users struggle to navigate or understand what the site offers.
 
 Unfortunately, since this dataset is four years old, we can’t audit the website directly to confirm which is the case.
 
@@ -450,7 +450,7 @@ We can see that the home page drives by far the most traffic. After that, most s
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-4.3.png" alt="linearly separable data">
 
-Interestingly, the pages where users enter the website are often the same ones where they leave. A useful next step would be to analyze how far users progress through the website depending on their landing page.
+Interestingly, the pages where users enter the website are often the same ones where they leave. A useful next step would be to analyze how far users progress through the website depending on their landing page. Let's do that.
 
 ## Are some landing pages “dead ends”?
 
@@ -478,10 +478,11 @@ Actually, we can see that the home does not perform as bad as the previous analy
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-4.4.png" alt="linearly separable data">
 
-In terms of product categories, we can see that certain categories perform much better than others. For example, Apparel and YouTube categories have 2.1 and 2.6 average node lengths respectively, whereas Mens and Google have have 5 and 9.96 average node lengths. 
+In terms of product categories, we can see that certain categories perform much better than others. For example, Apparel and YouTube categories have 2.1 and 2.6 average node lengths respectively, whereas Mens and Google have have 5 and 9.96 average node lengths. So, I would probably urge the UX/UI team to focus on Apparel and YouTube, as they drive a lot traffic, but the average node length is very small.
 
 ## Funnel analysis by landing pages
-We can now combine path analysis with funnel analysis. For each landing page, we’ll measure how often key e-commerce events occur — such as `view_item`, `add_to_cart`, and `purchase`, to understand how effectively each entry point drives users through the funnel.
+
+Node length is a good indicator, but this doesn't tell us if users purchase or not. So, to answer that, we can now combine path analysis with funnel analysis. For each landing page, we’ll measure how often key e-commerce events occur, such as `view_item`, `add_to_cart`, and `purchase`, to understand how effectively each entry point drives users through the funnel.
 
 First, let's extract the landing page from each path, and also whether a path contains a `view_item`, `add_to_cart` or `purchase` event:
 
@@ -517,7 +518,7 @@ Now each path is correctly labeled:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-4.6.png" alt="linearly separable data">
 
-Then, for each e-commerce event, let's calculate the conversion rate by landing page:
+Then, for each e-commerce event, let's calculate the conversion rate by landing page. Let's start with the `view_item` event:
 
 ```R
 view_item_conv_rate <- 
@@ -553,13 +554,15 @@ This gives us a table showing how often each page served as a landing page acros
 Let's do the same for `add_to_cart`, but let's filter only the landing pages included in the `view_item` table we extracted before.
 
 ```R
-# add_to_cart
-unique_pages_view_item = view_item_conv_rate %>% pull(landing_page) %>% unique()
+  # landing pages present in view_item table
+unique_pages_view_item <- view_item_conv_rate %>% pull(landing_page) %>% unique()
 
+  # add to cart conversion rate by landing page
 add_to_cart_conv_rate <- paths_with_funnel_steps %>% 
   
   filter(landing_page %in% unique_pages_view_item) %>% 
   
+  # Count combinations of landing page and add_to_cart
   group_by(landing_page, add_to_cart) %>% 
   reframe(count = sum(count)) %>% 
   ungroup() %>%
@@ -568,10 +571,13 @@ add_to_cart_conv_rate <- paths_with_funnel_steps %>%
   
   replace(is.na(.), 0) %>% 
   
+  # Keep only pages with a significant amount of add to cart events
   filter(add_to_cart_no > 100) %>% 
   
+  # Calculate add to cart conversion rate
   mutate(add_to_cart_conv_rate = add_to_cart_yes / (add_to_cart_yes + add_to_cart_no)) %>%
   
+  # Select only landing page and add to cart conversion rate columns
   select(landing_page, add_to_cart_conv_rate)
 ```
 
@@ -632,7 +638,15 @@ funnel_steps_joined %>%
   )
 ```
 
-Everything below the red diagonal represents landing pages where the purchase rate is lower than the add-to-cart rate would predict. In other words, users often add items to the cart but fail to complete the purchase, suggesting friction in the checkout process or weak purchase intent. Our UX/UI team should on pages below the line to identify where users hesitate or drop off post–add-to-cart.
+In the chart below, the size of each point represents the number of landing page sessions, which we can use as a proxy for impact. The red diagonal shows the expected relationship between the add-to-cart rate and the purchase rate. Points below the line indicate landing pages where users often add products to their cart but rarely complete the purchase, a sign of friction in the checkout process or weak purchase intent.
+
+The landing page “Apparel/Google+Dino+Game+Tee” draws a fair amount of traffic but shows zero add-to-cart and purchase conversions, definitely worth investigating.
+
+Several other pages, such as “/Apparel,” “Lifestyle/Bags,” and “Lifestyle/Drinkware,” have low add-to-cart and purchase rates. If users don’t even add items to their cart, it may indicate a mismatch between their intent and what the page delivers.
+
+The “Apparel/Mens/Mens+T+Shirts” category drives solid add-to-cart rates but low purchase completion. It could be a logistics issue (e.g., limited shipping regions) or checkout friction. Segmenting by country could help pinpoint the cause.
+
+Finally, “Apparel/Mens” and “Shop+By+Brand+Google” are strong performers, efficiently converting add-to-cart events into purchases. If this were live data, I’d explore these pages manually, check search console keywords, and review ad traffic sources to understand what’s driving their success.
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-4.9.png" alt="linearly separable data">
 
@@ -680,7 +694,7 @@ This is a strong signal, but correlation doesn’t imply causation. Are users wh
 
 ## What happens after users sign in?
 
-Let's filter all the steps that contain a sign in, and let's enrich the data by extracting user paths with a `purchase` event, whether they start with a sign in or not and what happens after a sign in.
+Let’s filter all paths that include a sign-in event and enrich the data to identify whether those sessions contain a purchase event, whether they start with a sign-in, and what actions follow it.
 
 ```R
 sign_in_clean <- paths_enriched %>% 
@@ -724,11 +738,11 @@ sign_in_clean %>%
   arrange(desc(count))
 ```
 
-We can see that in almost 20% of cases, users exit the website right after signing in. This could indicate a problem with the sign-in process itself or a tracking issue. Either way, it’s worth investigating. If it’s a real behavior, it could be costing the website a lot in lost revenue:
+We can see that in almost 20% of sessions, users leave the website immediately after signing in. This could point to an issue with the sign-in process itself or a tracking problem. Either way, it’s worth investigating, if this behavior is real, it could represent a significant loss in potential revenue.
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-5.1.png" alt="linearly separable data">
 
-If we investigate the number of user paths that start with a sign in:
+How many paths start with a sign in? If we investigate the number of user paths that start with a sign in:
 
 ```R
 sign_in_clean %>% 
@@ -742,6 +756,36 @@ sign_in_clean %>%
   arrange(desc(count))
 ```
 
-We can see that 15.5% of user paths that contain a sign in are affected. This definitely points to a tracking issue:
+How many paths start with a sign-in? If we look at the data, we can see that 15.5% of all user paths that contain a sign-in event actually begin with one. This strongly suggests a tracking issue, it’s highly unlikely that a user’s first interaction on the site is signing in.
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-5.2.png" alt="linearly separable data">
+
+How do sessions that start with a sign-in impact purchases? Let's combine user paths that start with a sign in with those that contain a purchase event.
+
+```R
+sign_in_clean %>% 
+  
+  # Count sessions that start with a sign in even with purchases
+  group_by(start_with_sign_in, purchase) %>% 
+  reframe(count = sum(count)) %>% 
+  ungroup() %>% 
+  
+  # Calculate percentage of combination
+  group_by(start_with_sign_in) %>% 
+  mutate(pct_count = count / sum(count)) %>% 
+  ungroup() %>% 
+  
+  arrange(desc(count)) %>% 
+  
+  # Remove count column
+  select(-count) %>% 
+  
+  # Turn pct_count into a percentage column
+  mutate(pct_count = percent(pct_count, accuracy = 0.1)) %>% 
+  
+  pivot_wider(names_from = purchase, values_from = pct_count, names_prefix = "purchase_")
+```
+
+Among user paths that begin with a sign-in, only 2.8% lead to a purchase. In contrast, 17.2% of paths that don’t start with a sign-in end in a purchase. This suggests there may be friction in the sign-in process, users could be getting frustrated or encountering an error that prevents them from completing their purchase.
+
+<img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-5.3.png" alt="linearly separable data">
