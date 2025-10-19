@@ -375,7 +375,7 @@ paths_enriched <- paths %>%
 
 This gives additional information to analyze our data:
 
-<img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-3.1.png" alt="linearly separable data">
+<img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-2.9.png" alt="linearly separable data">
 
 # Data analysis
 ## Where do users drop off most frequently?
@@ -636,7 +636,7 @@ Everything below the red diagonal represents landing pages where the purchase ra
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-4.9.png" alt="linearly separable data">
 
-## How do promotion views affect engagement or conversion?
+## How do promotion views affect conversions?
 One thing that we can observe from the data is that many user paths include a `view_promotion` event. So, it would be interesting to understand whether this event leads to a higher conversion rate.
 
 To do that, we have separate the user paths that contain a `view_promotion` event from those who don't, and then, within each group see how many paths contain a `puchase` event.
@@ -678,174 +678,70 @@ User paths that include a `view_promotion` event show a much higher conversion r
 
 This is a strong signal, but correlation doesn’t imply causation. Are users who were already likely to buy simply more inclined to click on promotions, or do the promotions themselves drive conversions? To find out, we’d need to run an A/B test where one group is exposed to promotions and the other isn’t.
 
-## How far do users typically progress through the purchase funnel?
-## Which pages lead to conversions most effectively?
 ## What happens after users sign in?
-## How many steps does it take to reach a key goal?
 
-Now that we have all user paths, let’s check how many of them include the event `view_promotion`. To do that, we will label each path depending on whether this event appears in it, and then calculate how frequent it is:
+Let's filter all the steps that contain a sign in, and let's enrich the data by extracting user paths with a `purchase` event, whether they start with a sign in or not and what happens after a sign in.
 
 ```R
-paths_enriched %>% 
+sign_in_clean <- paths_enriched %>% 
   
-  mutate(paths_with_view_promotion = case_when(
-    path %>% str_detect("view_promotion") ~ "view_promotion",
-    TRUE ~ "no view_promotion"
+  # Filter paths that contain a sign in
+  filter(path %>% str_detect("signin")) %>% 
+
+  # Label paths based on whether they start with sign in or not
+  mutate(start_with_sign_in = case_when(
+    path %>% str_detect("^\\/signin") ~ "yes",
+    TRUE ~ "no"
   )) %>% 
   
-  group_by(paths_with_view_promotion) %>% 
-  reframe(count = sum(count)) %>% 
-  ungroup() %>% 
-  
-  mutate(pct_count = count / sum(count))
-```
-
-Result:
-
-<img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-3.2.png" alt="linearly separable data">
-
-It would seem that approximately 38% of user paths contain a `view_promotion` event, which suggests that promotions are clearly visible and actively engaged with on the website.
-
-Now, let's count the occurence of the number of nodes.
-
-```R
-paths_enriched %>% 
-  
-  group_by(number_of_nodes) %>% 
-  reframe(count = sum(count)) %>% 
-  ungroup() %>% 
-
-  mutate(pct_count = count / sum(count))
-```
-
-Result:
-
-<img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-3.3.png" alt="linearly separable data">
-
-We can see that almost half of all paths end after just one node. This suggests that users either land on a page that doesn’t meet their needs or are unable to find what they’re looking for by navigating further through the site.
-
-Now, let's count the number of paths with a `purchase` event, which is obviously the most important signal for an e-commerce website:
-
-```R
-paths_enriched %>% 
-  
-  mutate(paths_with_purchase = case_when(
-    path %>% str_detect("purchase") ~ "purchase",
-    TRUE ~ "no purchase"
+  # Label paths based on purchase event
+  mutate(purchase = case_when(
+    path %>% str_detect("purchase") ~ "yes",
+    TRUE ~ "no"
   )) %>% 
   
-  group_by(paths_with_purchase) %>% 
-  reframe(count = sum(count)) %>% 
-  ungroup() %>% 
+  # Remove the sign in
+  mutate(after_sign_in = path %>% str_remove_all(".*\\/signin\\.html")) %>% 
   
-  mutate(pct_count = count / sum(count))
+  # Keep only the first step after sign in
+  mutate(after_sign_in = after_sign_in %>% str_remove_all("^ >>> ") %>% str_remove_all(" >>> .*")) %>% 
+  
+  # If there is nothing after sign in, label it as an exit
+  mutate(after_sign_in = ifelse(after_sign_in == "", "exit", after_sign_in))
 ```
 
-Result:
-
-<img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-3.4.png" alt="linearly separable data">
-
-We can see that only 1.45% of user paths end in a purchase.
-
-Now we want to understand how far users progress along the purchase funnel. To do that, we’ll look at each path and identify the latest funnel event it contains, such as `view_item`, `add_to_cart`, `begin_checkout`, or `purchase`.
+Let's see what happens after users sign-in:
 
 ```R
-paths_enriched %>% 
-    
-  filter(path %>% str_detect("purchase|add_payment_info|begin_checkout|add_shipping_info|add_to_cart|view_item")) %>% 
-
-  mutate(latest_funnel_step = case_when(
-    path %>% str_detect("purchase") ~ "purchase",
-    path %>% str_detect("add_payment_info") ~ "add_payment_info",
-    path %>% str_detect("begin_checkout") ~ "begin_checkout",
-    path %>% str_detect("add_shipping_info") ~ "add_shipping_info",
-    path %>% str_detect("add_to_cart") ~ "add_to_cart",
-    path %>% str_detect("view_item") ~ "view_item",
-    TRUE ~ "Other"
-  )) %>% 
+sign_in_clean %>%  
   
-  group_by(latest_funnel_step) %>% 
+  group_by(after_sign_in) %>% 
+  reframe(count = sum(count)) %>% 
+  ungroup() %>%
+  
+  mutate(pct_count = count / sum(count)) %>% 
+  
+  arrange(desc(count))
+```
+
+We can see that in almost 20% of cases, users exit the website right after signing in. This could indicate a problem with the sign-in process itself or a tracking issue. Either way, it’s worth investigating. If it’s a real behavior, it could be costing the website a lot in lost revenue:
+
+<img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-5.1.png" alt="linearly separable data">
+
+If we investigate the number of user paths that start with a sign in:
+
+```R
+sign_in_clean %>% 
+  
+  group_by(start_with_sign_in) %>% 
   reframe(count = sum(count)) %>% 
   ungroup() %>% 
   
   mutate(pct_count = count / sum(count)) %>% 
-    
+  
   arrange(desc(count))
 ```
 
-The first line keeps only the paths that contain at least one of the funnel-related events: `purchase`, `add_payment_info`, `begin_checkout`, `add_shipping_info`, `add_to_cart`, or `view_item`.
+We can see that 15.5% of user paths that contain a sign in are affected. This definitely points to a tracking issue:
 
-Afterwards, we label each path by its latest funnel step using `case_when()`, we create a new column called `latest_funnel_step`. The code checks for each event in descending order of funnel depth. For example, if a path contains "purchase", it’s labeled "purchase". If not, but it contains "add_payment_info", it’s labeled "add_payment_info", and so on. This ensures each path is assigned the furthest step it reached in the funnel.
-
-Later, the data is grouped by `latest_funnel_step`, and the total number of paths for each step is calculated using `sum(count)`.
-
-Then, We then compute the share of each funnel step relative to the total, creating a `pct_count` column. Finally, `arrange(desc(count))` sorts the funnel steps from the most common to the least common.
-
-Result:
-
-<img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-3.5.png" alt="linearly separable data">
-
-Right away, we can see something unusual: the `begin_checkout` event appears less frequently than the `purchase` event. This likely points to a tracking issue somewhere in the funnel. In fact, analyzing data like this is one of the most effective ways to spot inconsistencies in tracking.
-
-While reviewing the data, I noticed that many user paths start with "/signin". That’s unlikely, since a session beginning with a sign-in page doesn’t make much sense. My guess is that users are signing in, but tracking is being lost right after authentication Let’s check how many paths actually start with "/signin".
-
-```R
-paths_enriched %>% 
-  
-  filter(path %>% str_detect("\\/signin")) %>%
-
-  mutate(sign_in_or_no = case_when(
-    path %>% str_detect("^\\/signin") ~ "Starts with sign in",
-    TRUE ~ "No start with sign in"
-  )) %>% 
-  
-  group_by(sign_in_or_no) %>% 
-  reframe(count = sum(count)) %>% 
-  ungroup() %>% 
-  
-  mutate(pct_count = count / sum(count))
-```
-
-Result:
-
-<img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-3.6.png" alt="linearly separable data">
-
-It appears that authentication is the first recorded step in about 15% of user paths that include a sign-in event, this definitely points out to a tracking issue.
-
-Now, let's see what is the average user path length based on the landing page. Maybe there are certain landing pages that lead to longer navigation. First of all, let's extract the landing page from each path:
-
-```R
-paths_enriched %>% 
-  
-  mutate(landing_page = path %>% str_extract(".* >>>") %>% str_replace_all(" >>>.*", "")) %>%
-    
-  mutate(landing_page = ifelse(is.na(landing_page), path, landing_page))
-```
-
-Result:
-
-<img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-3.7.png" alt="linearly separable data">
-
-Then, let's calculate a weighted average of `number_of_nodes` based on `count`:
-
-```R
-paths_enriched %>% 
-  
-  mutate(landing_page = path %>% str_extract(".* >>>") %>% str_replace_all(" >>>.*", "")) %>%
-    
-  mutate(landing_page = ifelse(is.na(landing_page), path, landing_page)) %>% 
-    
-  group_by(landing_page) %>% 
-  reframe(weighted_avg_nodes = weighted.mean(number_of_nodes, count),
-          count = sum(count)) %>% 
-  ungroup() %>% 
-    
-  arrange(desc(count))
-```
-
-Result:
-
-<img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-3.8.png" alt="linearly separable data">
-
-It would seem that people that land on the homepage do explore the website quite a lot, whereas people who land on a product or category page do not stick for long. Maybe those pages deserve more attention.
-
+<img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-5.2.png" alt="linearly separable data">
