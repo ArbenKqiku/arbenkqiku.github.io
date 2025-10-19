@@ -13,6 +13,7 @@ mathjax: "true"
 
 - [What is path analysis?](#what-is-path-analysis)
 - [What business questions can we answer with path analysis?](#what-business-questions-can-we-anwer-with-path-analysis?)
+- [Structure of this article](#structure-of-this-article)
 - [What tools are we going to use?](#what-tools-are-we-going-to-use)
 - [Extracting data from BigQuery](#extracting-data-from-bigquery)
 - [Download raw data in R](#download-raw-data-in-r)
@@ -21,31 +22,32 @@ mathjax: "true"
 - [Data analysis](#data-analysis)
   - [Where do users drop off most frequently?](#where-do-users-drop-off-most-frequently)
   - [What are the most common entry points?](#what-are-the-most-common-entry-points)
-  - [How far do users typically progress through the purchase funnel?](#how-far-do-users-typically-progress-through-the-purchase-funnel)
-  - [How do promotion views affect engagement or conversion?](#how-do-promotion-views-affect-engagement-or-conversion)
   - [Are some landing pages “dead ends”?](#are-some-landing-pages-dead-ends)
-  - [Which pages lead to conversions most effectively?](#which-pages-lead-to-conversions-most-effectively)
+  - [Funnel analysis by landing pages](#funnel-analysis-by-landing-pages)
+  - [How do promotion views affect conversion?](#how-do-promotion-views-affect-conversions)
   - [What happens after users sign in?](#what-happens-after-users-sign-in)
-  - [How many steps does it take to reach a key goal?](#how-many-steps-does-it-take-to-reach-a-key-goal)
+- [Next steps](#next-steps)
 
 # What is path analysis?
 
 Path analysis is a technique web and product analysts use to understand how users move through a website or app. It helps uncover friction points and dark patterns in the user journey.
 
-For example: if you notice many users returning to a previous page, that’s a red flag. Something on the current page isn’t working such as broken UI, confusing copy, or a missing step.
-
 # What business questions can we answer with path analysis?
+
+It is always important to start with business questions so that our analysis brings real value. Here are some possible questions:
 
 * Where do users drop off most frequently?
 * What are the most common entry points?
-* How far do users typically progress through the purchase funnel?
-* How do promotion views affect engagement or conversion?
 * Are some landing pages “dead ends”?
-* Which pages lead to conversions most effectively?
+* How far do users typically progress through the purchase funnel?
+* How do promotion views affect conversions?
 * What happens after users sign in?
-* How many steps does it take to reach a key goal?
 
-It is always important to start with business questions so that our analysis brings real value. We'll explore these questions once we've prepared the dataset.
+We'll explore these once we've prepared the dataset.
+
+# Structure of this article
+
+Some of you might be more interested in the data cleaning and preparation, while others may prefer to jump straight to the analysis and insights. The data cleaning section is intentionally detailed, so if you’re mainly here for the interpretation, feel free to skip ahead to the analysis section.
 
 # What tools are we going to use?
 
@@ -96,7 +98,9 @@ This is the raw data the we're going to use:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-1.1.png" alt="linearly separable data">
 
-Let's save the result as a BigQuery table.
+If you would want to learn how to extract data from BigQuery, Simmer offers [a great course] (#https://www.teamsimmer.com/all-courses/mastering-ga4-with-google-bigquery/).
+
+Anyway, let's save the result as a BigQuery table.
 
 # Download raw data in R
 
@@ -191,7 +195,7 @@ Much better:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-1.7.png" alt="linearly separable data">
 
-Actually, let's reorder the columns, let's have the `unique_session_id` first:
+Let's reorder the columns with `unique_session_id` first:
 
 ```R
 raw_data %>% 
@@ -201,10 +205,6 @@ raw_data %>%
   # reorder columns
   select(unique_session_id, event_name, page_location)
 ```
-
-I prefer to have a unique identifier to the left:
-
-<img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-1.8.png" alt="linearly separable data">
 
 Our goal is to understand which pages users visited and what actions they performed on those pages. To do this, we’ll create a new column that combines both page views and other user events. If the event is `page_view`, we’ll keep the page URL (page_location) as the value. If the event is something else, like `view_promotion` or `add_to_cart`, we’ll use the event name instead.
 
@@ -307,7 +307,7 @@ Much more readable:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-2.7.png" alt="linearly separable data">
 
-Now, for each `unique_session_id`, we can combine all navigation steps into a single sequence to represent the user’s full path. Each step will be separated by " >>> " for readability:
+Now, for each `unique_session_id`, we can combine all navigation steps into a single sequence to represent the user’s full path. Each step will be separated by 3 ">" for readability:
 
 ```R
 raw_data %>% 
@@ -318,12 +318,6 @@ raw_data %>%
   reframe(path = paste(navigation, collapse = " >>> ")) %>% 
   ungroup()
 ```
-
-What this does:
-
-- `group_by(unique_session_id)` groups all events belonging to the same session.
-- `paste(navigation, collapse = " >>> ")` concatenates all navigation values in order, separating them with " >>> ".
-- `reframe()` returns one row per session, with a single path column that stores the full journey.
 
 Now each row represents the full path of a user:
 
@@ -419,9 +413,9 @@ When that happens, it usually means there’s a mismatch between user intent and
 
 Unfortunately, since this dataset is four years old, we can’t audit the website directly to confirm which is the case.
 
-Another observation: many sessions also end on category or product pages (like /Apparel). That suggests users reach the point of evaluation but not conversion. Possible explanations include:
-- Product appeal issues, users aren’t convinced by the offer (price, description, imagery).
-- UX issues, product discovery or comparison may be frustrating (filters, sorting, or speed).
+Another observation: many sessions also end on category or product pages (like **/Apparel**). That suggests users reach the point of evaluation but not conversion. Possible explanations include:
+* Product appeal issues, users aren’t convinced by the offer (price, description, imagery).
+* UX issues, product discovery or comparison may be frustrating (filters, sorting, or speed).
 
 Either way, the home and the Apparel category seem like a good starting points for the UX/UI team, as they drive the highest number of exits.
 
@@ -474,11 +468,11 @@ paths_enriched %>%
   arrange(desc(count))
 ```
 
-Actually, we can see that the home does not perform as bad as the previous analyses would suggest, as the average node length is 6.97.
+Actually, we can see that the **home** does not perform as bad as the previous analyses would suggest, as the average node length is 6.97.
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-4.4.png" alt="linearly separable data">
 
-In terms of product categories, we can see that certain categories perform much better than others. For example, Apparel and YouTube categories have 2.1 and 2.6 average node lengths respectively, whereas Mens and Google have have 5 and 9.96 average node lengths. So, I would probably urge the UX/UI team to focus on Apparel and YouTube, as they drive a lot traffic, but the average node length is very small.
+In terms of product categories, we can see that certain categories perform much better than others. For example, **Apparel** and **YouTube** categories have 2.1 and 2.6 average node lengths respectively, whereas **Mens** and **Google** have have 5 and 9.96 average node lengths. So, I would probably urge the UX/UI team to focus on **Apparel** and **YouTube**, as they drive a lot traffic, but the average node length is very small.
 
 ## Funnel analysis by landing pages
 
@@ -640,15 +634,15 @@ funnel_steps_joined %>%
 
 In the chart below, the size of each point represents the number of landing page sessions, which we can use as a proxy for impact. The red diagonal shows the expected relationship between the add-to-cart rate and the purchase rate. Points below the line indicate landing pages where users often add products to their cart but rarely complete the purchase, a sign of friction in the checkout process or weak purchase intent.
 
-The landing page “Apparel/Google+Dino+Game+Tee” draws a fair amount of traffic but shows zero add-to-cart and purchase conversions, definitely worth investigating.
-
-Several other pages, such as “/Apparel,” “Lifestyle/Bags,” and “Lifestyle/Drinkware,” have low add-to-cart and purchase rates. If users don’t even add items to their cart, it may indicate a mismatch between their intent and what the page delivers.
-
-The “Apparel/Mens/Mens+T+Shirts” category drives solid add-to-cart rates but low purchase completion. It could be a logistics issue (e.g., limited shipping regions) or checkout friction. Segmenting by country could help pinpoint the cause.
-
-Finally, “Apparel/Mens” and “Shop+By+Brand+Google” are strong performers, efficiently converting add-to-cart events into purchases. If this were live data, I’d explore these pages manually, check search console keywords, and review ad traffic sources to understand what’s driving their success.
-
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-4.9.png" alt="linearly separable data">
+
+The landing page **Apparel/Google+Dino+Game+Tee** draws a fair amount of traffic but shows zero add-to-cart and purchase conversions, definitely worth investigating.
+
+Several other pages, such as **/Apparel**. **Lifestyle/Bags**, and **Lifestyle/Drinkware**, have low add-to-cart and purchase rates. If users don’t even add items to their cart, it may indicate a mismatch between their intent and what the page delivers.
+
+The **Apparel/Mens/Mens+T+Shirts** category drives solid add-to-cart rates but low purchase completion. It could be a logistics issue (e.g., limited shipping regions) or checkout friction. Segmenting by country could help pinpoint the cause.
+
+Finally, **Apparel/Mens** and **Shop+By+Brand+Google** are strong performers, efficiently converting add-to-cart events into purchases. If this were live data, I’d explore these pages manually, check search console keywords, and review ad traffic sources to understand what’s driving their success.
 
 ## How do promotion views affect conversions?
 One thing that we can observe from the data is that many user paths include a `view_promotion` event. So, it would be interesting to understand whether this event leads to a higher conversion rate.
@@ -789,3 +783,18 @@ sign_in_clean %>%
 Among user paths that begin with a sign-in, only 2.8% lead to a purchase. In contrast, 17.2% of paths that don’t start with a sign-in end in a purchase. This suggests there may be friction in the sign-in process, users could be getting frustrated or encountering an error that prevents them from completing their purchase.
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-5.3.png" alt="linearly separable data">
+
+## Next steps
+
+Analysis without action is not super useful, so, let's end this article with some recommendations:
+
+* Run an A/B test on promotions. User paths with a `view_promotion` event show much higher purchase conversion rates. Testing can confirm whether the promotion itself drives this effect.
+* Fix potential sign-in issues. Paths starting with a sign-in have significantly lower purchase rates, suggesting friction or tracking loss.
+* Investigate the landing page **Apparel/Google+Dino+Game+Tee**. It receives notable traffic but has zero add-to-cart and purchase conversions.
+* Review **/Apparel**, **Lifestyle/Bags**, and **Lifestyle/Drinkware**. Low engagement on these pages could stem from a mismatch between user intent and landing-page content. If targeting is correct, assess UX and layout.
+* Segment **Apparel/Mens/Mens+T+Shirts** by country. Strong add-to-cart rates but weak purchases may reflect logistics limits such as restricted shipping.
+* Analyze traffic sources for **Apparel/Mens** and **Shop+By+Brand+Google**. Both convert efficiently; understanding which channels drive them could inform campaign scaling.
+
+If you enjoyed this article, connect with me on [LinkedIn](https://www.linkedin.com/in/arben-kqiku-301457117/).
+
+Happy coding :)
