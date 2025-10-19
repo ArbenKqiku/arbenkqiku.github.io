@@ -32,6 +32,10 @@ mathjax: "true"
 
 Path analysis is a technique web and product analysts use to understand how users move through a website or app. It helps uncover friction points and dark patterns in the user journey.
 
+# What is a user path
+
+A user path is the sequence of steps a user takes through your site or product, typically the pages they visit in order, and optionally the events they trigger along the way.
+
 # What business questions can we answer with path analysis?
 
 It is always important to start with business questions so that our analysis brings real value. Here are some possible questions:
@@ -512,7 +516,7 @@ Now each path is correctly labeled:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-4.6.png" alt="linearly separable data">
 
-Then, for each e-commerce event, let's calculate the conversion rate by landing page. Let's start with the `view_item` event:
+For each e-commerce event, we’ll calculate the share of paths (per landing page) that contain that event. I’ll refer to this as a “conversion rate” for brevity, but it’s a path-level share, not a session or user conversion rate. Let’s start with `view_item` event:
 
 ```R
 view_item_conv_rate <- 
