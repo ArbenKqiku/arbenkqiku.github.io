@@ -30,9 +30,7 @@ mathjax: "true"
 
 # What is path analysis?
 
-A user path is the sequence of steps a user takes through your site or product, typically the pages they visit in order, and optionally the events they trigger along the way.
-
-Path analysis is a technique web and product analysts use to understand how users move through a website or app. It helps uncover friction points and dark patterns in the user journey.
+A user path is the sequence of steps a user takes through your site or product, typically the pages they visit in order, and optionally the events they trigger along the way. Path analysis helps uncover friction points and dark patterns in the user journey.
 
 # What business questions can we answer with path analysis?
 
@@ -45,7 +43,7 @@ It is always important to start with business questions so that our analysis bri
 * How do promotion views affect conversions?
 * What happens after users sign in?
 
-We'll explore these once we've prepared the dataset.
+We'll explore these after cleaning the dataset.
 
 # Structure of this article
 
@@ -59,7 +57,7 @@ You can run path analysis directly in [GA4’s Explore section](https://support.
 
 With R, you’re not limited to the top results. You can count every possible path, no matter how rare. You can also mix dimensions, such as combining page location with events, to build a richer picture of user behavior.
 
-For this analysis, we're going to use [Google's Merchandise Store BigQuery Export](https://developers.google.com/analytics/bigquery/web-ecommerce-demo-dataset?sjid=6808846338302705229-EU).
+For this analysis, we're going to use [Google's Merchandise Store BigQuery Export](https://developers.google.com/analytics/bigquery/web-ecommerce-demo-dataset?sjid=6808846338302705229-EU). The data is from the 2020-11-01 to the 2021-01-31.
 
 # Extracting data from BigQuery
 
@@ -96,7 +94,7 @@ order by
   user_pseudo_id, session_id, event_timestamp
 ```
 
-This is the raw data the we're going to use. The data from the 2020-11-01 to the 2021-01-31.
+This is the raw data the we're going to use.
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-1.1.png" alt="linearly separable data">
 
