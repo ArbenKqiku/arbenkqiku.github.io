@@ -393,7 +393,7 @@ Here is the count of each exit page or event:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/article-5-path-analysis/image-4.1.png" alt="linearly separable data">
 
-In most sessions, the last step is the home page. This could mean that users return to the home because they can’t find what they’re looking for, or that they leave the website right after arriving. Let’s take a closer look at the paths that end with the home page.
+In most user paths, the last step is the home page. This could mean that users return to the home because they can’t find what they’re looking for, or that they leave the website right after arriving. Let’s take a closer look at the paths that end with the home page.
 
 ```R
 paths_enriched %>% 
