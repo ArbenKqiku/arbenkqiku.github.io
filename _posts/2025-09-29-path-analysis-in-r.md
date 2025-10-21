@@ -49,6 +49,8 @@ We'll explore these after cleaning the dataset.
 
 Some of you might be more interested in the data cleaning and preparation, while others may prefer to jump straight to the analysis and insights. The data cleaning section is intentionally detailed, so if you’re mainly here for the interpretation, feel free to skip ahead to the analysis section.
 
+I have created a [github repository](https://github.com/ArbenKqiku/use-r-bigquery-to-build-user-paths-google-merchandise-store) with the raw data, the clean data and the analysis code, so that you can reproduce the exact analysis or even come up with your own questions. 
+
 # What tools are we going to use?
 
 We'll retrieve the raw data with BigQuery and then we'll build the user paths with R.
