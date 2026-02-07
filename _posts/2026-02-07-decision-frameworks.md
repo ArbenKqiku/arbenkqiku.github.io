@@ -17,6 +17,9 @@ The analytics industry is obsessed with *data-driven decision-making*. On the fi
 
 But when it comes to the second part, *decision-making*, the industry seems stuck. We produce more metrics than ever, yet that doesn't seem to help us make better decisions.
 
+# What decisions are businesses interested in?
+
+
 # Comparability
 
 # Dimensions of comparability
