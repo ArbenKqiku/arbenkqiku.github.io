@@ -26,7 +26,7 @@ Potential is about how big the opportunity is. It answers the question: if this 
 
 Efficiency is about execution quality. It describes how effectively that potential is turned into results. In digital marketing, this can be measured using metrics such as conversion rate, cost per lead, or profit on ad spend.
 
-# Am example from the financial industry
+# An example from the financial industry
 
 In a past project with a company in the financial services industry, the sales team raised a familiar concern: they were not getting enough leads.
 
@@ -38,10 +38,26 @@ The prospect funnel showed the opposite pattern. Conversion rates were lower and
 
 At that point, the question was no longer which funnel performs better. Each performed well in a different way. The real question was where to invest optimization effort.
 
-Using a simple decision framework helped make the tradeoff clear. The prospect funnel had higher potential but lower efficiency. The existing customer funnel had higher efficiency but limited potential. Putting both options on the same dimensions made the discussion easier and more focused.
+Using a simple decision framework helped make the tradeoff clear. The prospect funnel had higher potential but lower efficiency, whereas the existing customer funnel had higher efficiency but limited potential, as displayed in the image below:
 
-<img src="{{ site.url }}{{ site.baseurl }}/images/article-6-decision-frameworks/image-1.png" alt="linearly separable data">
+<img src="{{ site.url }}{{ site.baseurl }}/images/article-6-decision-frameworks/image-1.png" alt="Decision Matrix showing Prospects in the Higher Potential/Lower Efficiency quadrant and Existing Customers in the Lower Potential/Higher Efficiency quadrant.">
 
-The framework did not produce a single correct answer. Instead, it made the tradeoff explicit. In this situation, the company had recently increased sales capacity, so lead volume mattered more than lead efficiency. Given that context, prioritizing the prospect funnel was a deliberate and informed choice.
+# Context matters
 
-The important point is that the framework did not change the data. It changed how the decision was made. The conversation moved away from debating metrics and toward discussing priorities, constraints, and timing.
+Data alone is not enough to make good decisions. It is important to talk to stakeholders, because they often have strategic, operational, or organizational context that is not visible in the data.
+
+In this case, a conversation with the head of sales revealed an important constraint: the company had recently hired many new salespeople. As a result, the immediate priority was not lead quality, but lead volume. Given that context, focusing on the prospect funnel was the option most aligned with what the company was trying to achieve.
+
+This is why stakeholder input is a key part of decision-making.
+
+Our course [Data Analysis With R](https://www.teamsimmer.com/all-courses/data-analysis-with-r/) culminates with the Stakeholder Pressure Test. Throughout the course, we analyze Simo Ahava’s blog. At the end, we pressent the analysis and recommendations to Simo, explaining where additional effort would have the biggest impact on traffic growth.
+
+The purpose of this exercise is to show that conversations with stakeholders help refine the analysis until it leads to decisions that actually matter.
+
+# What is our role as analysts?
+
+Our job isn't just to report data, but to define the proxies that measure potential and efficiency. In [Data Analysis With R](https://www.teamsimmer.com/all-courses/data-analysis-with-r/), we build a custom proxy for efficiency: measuring exactly how much traffic each "second" of published content generates across different topics (ex.: Server-Side Tag Management). We use R for this because it allows us to bake this specific business logic directly into our scripts. This makes the entire analytical process transparent, and reproducible for future decisions.
+
+
+
+In the financial industry example, we used the lead to sale conversion rate.
