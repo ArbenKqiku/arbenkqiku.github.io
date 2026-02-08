@@ -58,6 +58,4 @@ The purpose of this exercise is to show that conversations with stakeholders hel
 
 Our job isn't just to report data, but to define the proxies that measure potential and efficiency. In [Data Analysis With R](https://www.teamsimmer.com/all-courses/data-analysis-with-r/), we build a custom proxy for efficiency: measuring exactly how much traffic each "second" of published content generates across different topics (ex.: Server-Side Tag Management). We use R for this because it allows us to bake this specific business logic directly into our scripts. This makes the entire analytical process transparent, and reproducible for future decisions.
 
-
-
-In the financial industry example, we used the lead to sale conversion rate.
+However, even the best reports can be politely ignored if they don't communicate effectively. That is why the final step of our workflow is to map these findings onto a decision matrix. By visualizing alternatives along shared dimensions, we make it easy for stakeholders to see the trade-offs clearly.
