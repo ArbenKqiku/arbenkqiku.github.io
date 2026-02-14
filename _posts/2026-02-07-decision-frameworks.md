@@ -1,11 +1,3 @@
-# Table of Contents
-[Introduction](#introduction)
-[What is a decision framework?](#what-is-a-decision-framework)
-[An example from the financial industry](#an-example-from-the-financial-industry)
-[Context matters](#context-matters)
-[What is our role as analysts?](#what-is-our-role-as-analysts)
-[The Decision Framework Checklist](#the-decision-framework-checklist)
-
 # Data is Abundant, Decision are not
 Over the last decade, the analytics industry has become exceptionally good at measurement. We can track nearly every click, scroll, session, and conversion. Dashboards update in real time. In other words, the data-driven part of “data-driven decision-making” is largely under control. The decision-making part is not.
 
