@@ -6,7 +6,7 @@
 [What is our role as analysts?](#what-is-our-role-as-analysts)
 [The Decision Framework Checklist](#the-decision-framework-checklist)
 
-# Introduction
+# Data is Abundant, Decision are not
 Over the last decade, the analytics industry has become exceptionally good at measurement. We can track nearly every click, scroll, session, and conversion. Dashboards update in real time. In other words, the data-driven part of “data-driven decision-making” is largely under control. The decision-making part is not.
 
 Despite having more data than ever, many organizations still struggle to make clear, deliberate choices about where to invest time, budget, and effort. The problem is not a lack of data. It is a lack of structure around tradeoffs.
