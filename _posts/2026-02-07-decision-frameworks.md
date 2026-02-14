@@ -66,7 +66,7 @@ True insight comes from pairing dimensions that capture different realities, suc
 Before trusting any decision framework, ask a simple question: if one metric changes, does the other move automatically? If it does, your dimensions are not independent and the framework needs to be redesigned.
 
 # Caveat 2: Strategic Relevance
-A decision framework is only as good as the dimensions you choose. It is easy to build a beautiful matrix using metrics that are technically accurate but strategically irrelevant.
+It is easy to build a beautiful matrix using metrics that are technically accurate but strategically irrelevant.
 
 For example, an analyst might map marketing channels based on Engagement Rate (Efficiency) and Follower Growth (Potential). While these are easy to measure, they are "Vanity Metrics" if the company’s actual goal is Customer Acquisition Cost (CAC) optimization.
 
@@ -89,8 +89,8 @@ In R, analysts define their metrics programmatically. Business rules are written
 Most R courses focus on syntax and functions. This course focuses on using R to build decision-ready analyses that can withstand stakeholder scrutiny.
 
 # The Decision Framework Checklist
-- **Define the Alternatives**: Explicitly state the specific options you are evaluating.
-- **Establish Your Proxies**: Determine exactly how you will measure Potential (opportunity size) and Efficiency (execution quality), rather than relying on tool defaults.
+- **Define the Alternatives**: Explicitly state the options you are evaluating.
+- **Establish Your Proxies**: Determine exactly how you will measure Potential (opportunity size) and Efficiency (execution quality).
 - **Use Independent Dimensions**: Make sure your measures of Potential and Efficiency are not mathematically or logically linked. If a change in one metric automatically moves the other, you are double-counting the same signal.
 - **Align With the Primary KPI**: Make sure that doing well on both axes would actually move the company’s main goal forward. If it wouldn’t, you are measuring success in a way that doesn’t really matter.
 - **Integrate Strategic Context**: Consult stakeholders to identify the organizational constraints or incentives that shift priorities such as a sudden need for volume over margin.
